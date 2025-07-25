@@ -1,10 +1,9 @@
 import {
-    RNButton, RNHeader, RNInput, RNText
+    RNButton, RNInput, RNText
 } from "@/sources/common";
 import { Images } from "@/sources/constants";
 import { NavRoutes } from "@/sources/navigation";
-import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
-import Functions from "@/sources/utils/Functions";
+import { Colors, FontFamily, FontSize, hp, isIOS, wp } from "@/sources/theme";
 import { useRef, useState } from "react";
 import {
     ImageBackground,
@@ -18,10 +17,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
-import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import SVG from "@/sources/constants/Svg";
 import { registerCustomerRequester } from "@/sources/utils/requestUtils";
-import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot} from 'react-native-alert-notification';
 import validator from 'validator'
 const Register = ({ navigation }: any) => {
     const dispatch = useDispatch();

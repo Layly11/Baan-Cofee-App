@@ -1,11 +1,9 @@
-import { RNButton, RNHeader, RNInput, RNStyles, RNText } from "@/sources/common"
+import { RNButton, RNInput, RNStyles, RNText } from "@/sources/common"
 import { Images } from "@/sources/constants"
-import SVG from "@/sources/constants/Svg"
 import { NavRoutes } from "@/sources/navigation"
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers"
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme"
 import { saveAuthData } from "@/sources/utils/auth"
-import Functions from "@/sources/utils/Functions"
 import { LoginCustomerRequester } from "@/sources/utils/requestUtils"
 import { useFocusEffect } from "@react-navigation/native"
 import { useCallback, useRef, useState } from "react"
@@ -13,6 +11,8 @@ import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, 
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useDispatch } from "react-redux"
 import { isEmail } from 'validator'
+import { ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
+
 const Login = ({ navigation }: any) => {
     const dispatch = useDispatch();
     const insets = useSafeAreaInsets();
@@ -29,15 +29,20 @@ const Login = ({ navigation }: any) => {
         try {
 
             const res = await LoginCustomerRequester({ email, password })
-
             await saveAuthData(res.data.token)
-            dispatch(onAuthChange(true));
+            dispatch(onAuthChange(true))
             dispatch(setAsyncStorageValue({ user: res.data.customer }));
 
-            navigation.navigate(NavRoutes.HOME);
-
         } catch (err: any) {
-            alert(err.message || "Login failed");
+            console.log(err.res_code)
+            if (err.res_code === '0404') {
+                Dialog.show({
+                    type: ALERT_TYPE.DANGER,
+                    title: 'Login Failed',
+                    textBody: 'Email or Password Invalid',
+                    autoClose: 1500,
+                });
+            }
         }
     };
 
@@ -54,88 +59,92 @@ const Login = ({ navigation }: any) => {
 
 
     return (
-        <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-            <ImageBackground source={Images.AuthBack} style={{ width: wp(100), height: "100%" }}>
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <View style={{ flex: 1, justifyContent: "space-between" }}>
-                            <RNText
-                                size={FontSize.font30}
-                                family={FontFamily.Bold}
-                                color={Colors.White}
-                                align="center"
-                                pTop={hp(6)}
-                            >
-                                Welcome!
-                            </RNText>
-
-                            <View style={{ gap: hp(1.5) }}>
+        <AlertNotificationRoot>
+            <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+                <ImageBackground source={Images.AuthBack} style={{ width: wp(100), height: "100%" }}>
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                            <View style={{ flex: 1, justifyContent: "space-between" }}>
                                 <RNText
-                                    size={FontSize.font20}
+                                    size={FontSize.font30}
                                     family={FontFamily.Bold}
+                                    color={Colors.White}
                                     align="center"
-                                    pHorizontal={wp(12)}
+                                    pTop={hp(6)}
                                 >
-                                    Login to your account
+                                    Welcome!
                                 </RNText>
 
-                                <View style={{ paddingHorizontal: wp(5), gap: hp(1) }}>
-                                    <RNInput
-                                        placeholder="Email"
-                                        placeholderTextColor={Colors.Brown}
-                                        style={styles.input}
-                                        textContentType="emailAddress"
-                                        maxLength={30}
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        returnKeyType="next"
-                                        onSubmitEditing={() => phoneRef.current?.focus()}
-                                    />
-                                    <RNInput
-                                        ref={phoneRef}
-                                        placeholder="Password"
-                                        placeholderTextColor={Colors.Brown}
-                                        style={styles.input}
-                                        secureTextEntry
-                                        textContentType="none"
-                                        autoComplete="off"
-                                        value={password}
-                                        onChangeText={setPassword}
-                                        returnKeyType="done"
-                                        onSubmitEditing={handleLogin}
-                                    />
-                                </View>
+                                <View style={{ gap: hp(1.5) }}>
+                                    <RNText
+                                        size={FontSize.font20}
+                                        family={FontFamily.Bold}
+                                        align="center"
+                                        pHorizontal={wp(12)}
+                                    >
+                                        Login to your account
+                                    </RNText>
 
-                                <RNText
-                                    size={FontSize.font14}
-                                    family={FontFamily.Bold}
-                                    color={Colors.Brown}
-                                    align="center"
-                                    pHorizontal={wp(3)}
-                                >
-                                    Don’t have an account?{" "}
+                                    <View style={{ paddingHorizontal: wp(5), gap: hp(1) }}>
+                                        <RNInput
+                                            placeholder="Email"
+                                            placeholderTextColor={Colors.Brown}
+                                            style={styles.input}
+                                            textContentType="emailAddress"
+                                            maxLength={30}
+                                            value={email}
+                                            onChangeText={setEmail}
+                                            returnKeyType="next"
+                                            onSubmitEditing={() => phoneRef.current?.focus()}
+                                        />
+                                        <RNInput
+                                            ref={phoneRef}
+                                            placeholder="Password"
+                                            placeholderTextColor={Colors.Brown}
+                                            style={styles.input}
+                                            secureTextEntry
+                                            textContentType="none"
+                                            autoComplete="off"
+                                            value={password}
+                                            onChangeText={setPassword}
+                                            returnKeyType="done"
+                                            onSubmitEditing={handleLogin}
+                                        />
+                                    </View>
+
                                     <RNText
                                         size={FontSize.font14}
                                         family={FontFamily.Bold}
                                         color={Colors.Brown}
-                                        style={{ textDecorationLine: "underline" }}
-                                        onPress={() => navigation.navigate(NavRoutes.REGISTER)}
+                                        align="center"
+                                        pHorizontal={wp(3)}
                                     >
-                                        Register
+                                        Don’t have an account?{" "}
+                                        <RNText
+                                            size={FontSize.font14}
+                                            family={FontFamily.Bold}
+                                            color={Colors.Brown}
+                                            style={{ textDecorationLine: "underline" }}
+                                            onPress={() => navigation.navigate(NavRoutes.REGISTER)}
+                                        >
+                                            Register
+                                        </RNText>
                                     </RNText>
-                                </RNText>
-                            </View>
+                                </View>
 
-                            <RNButton
-                                title="Next"
-                                style={{ bottom: isIOS ? hp(3) : hp(5) }}
-                                onPress={handleLogin}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
-            </ImageBackground>
-        </View>
+                                <RNButton
+                                    title="Next"
+                                    style={{ bottom: isIOS ? hp(3) : hp(5) }}
+                                    onPress={handleLogin}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </KeyboardAvoidingView>
+                </ImageBackground>
+            </View>
+
+        </AlertNotificationRoot>
+
     );
 };
 

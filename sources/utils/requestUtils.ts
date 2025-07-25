@@ -1,5 +1,3 @@
-import { saveAuthData } from "./auth";
-
 export const registerCustomerRequester = async ({ name, email, password, phone }: any) => {
     try {
         const res = await fetch("http://127.0.0.1:9302/customer/register", {
@@ -11,7 +9,6 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
         })
 
         const json = await res.json();
-        console.log("JSON: ", json)
 
         if (!res.ok) {
             const err: any = new Error(json.res_desc || "Something went wrong");
@@ -38,6 +35,7 @@ export const LoginCustomerRequester = async ({ email, password }:any) => {
 
         const data = await res.json();
 
+        console.log("Data: ",data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
