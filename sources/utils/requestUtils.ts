@@ -1,6 +1,8 @@
+const SERVER_API = '192.168.100.16:9302'
+
 export const registerCustomerRequester = async ({ name, email, password, phone }: any) => {
     try {
-        const res = await fetch("http://127.0.0.1:9302/customer/register", {
+        const res = await fetch(`http://${SERVER_API}/customer/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -25,7 +27,7 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
 
 export const LoginCustomerRequester = async ({ email, password }:any) => {
     try {
-        const res = await fetch("http://127.0.0.1:9302/customer/login", {
+        const res = await fetch(`http://${SERVER_API}/customer/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import Add from "../assets/Svg/Add.svg";
 import Home from "../assets/Svg/Home.svg";
 import Menu from "../assets/Svg/Menu.svg";
 import Cart from "../assets/Svg/Cart.svg";
@@ -9,8 +10,14 @@ import Notification from "../assets/Svg/Notification.svg";
 import OnBoardBack from "../assets/Svg/OnBoardBack.svg";
 import Next from "../assets/Svg/Next.svg";
 import Back from "../assets/Svg/Back.svg";
+import HotCoffee from "../assets/Svg/HotCoffee.svg";
+import ColdCoffee from "../assets/Svg/ColdCoffee.svg";
+import Drinks from "../assets/Svg/Drinks.svg";
+import Snacks from "../assets/Svg/Snacks.svg";
+import Search from "../assets/Svg/Search.svg";
 
 const SVG = {
+    ADD: Add,
     HOME: Home,
     MENU: Menu,
     CART: Cart,
@@ -21,7 +28,12 @@ const SVG = {
     NOTIFICATION: Notification,
     ON_BOARD_BACK: OnBoardBack,
     NEXT: Next,
-    BACK: Back
+    BACK: Back,
+    HOT_COFFEE: HotCoffee,
+    COLD_COFFEE: ColdCoffee,
+    DRINKS: Drinks,
+    SNACKS: Snacks,
+    SEARCH: Search,
 }
 
 export default SVG;
