@@ -9,7 +9,7 @@ const TabContent = ({ state, navigation }: any) => {
   const insets = useSafeAreaInsets();
 
   const ICONS = [
-    { active: <SVG.HOME />, offset: wp(12) },
+    { active: <SVG.HOME />, offset: wp(-3) },
     { active: <SVG.MENU />, offset: wp(-7.5) },
     { active: <SVG.CART />, offset: wp(-11) },
   ];
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   curveContainer: {
     ...RNStyles.center,
     position: "absolute",
-    bottom: hp(-3.5),
+    bottom: hp(-2),
     zIndex: 2,
   },
   focusedIcon: {

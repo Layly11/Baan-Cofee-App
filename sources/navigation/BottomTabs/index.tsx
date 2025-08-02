@@ -9,6 +9,8 @@ import { Colors, hp, isIOS, normalize, wp } from "../../theme";
 import SVG from "../../constants/Svg";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import Home from "@/sources/screen/Main/Home";
+import Menu from "@/sources/screen/Main/Menu";
+import Cart from "@/sources/screen/Main/Cart";
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +50,8 @@ const Index = () => {
           ),
         }}
       />
+      <Tab.Screen name={NavRoutes.MENU} component={Menu} />
+      <Tab.Screen name={NavRoutes.CART} component={Cart} />
     </Tab.Navigator>
   );
 };

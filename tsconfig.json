@@ -11,5 +11,5 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-, "sources/navigation/BottomTabs/index.tsx"  ]
+, "sources/navigation/BottomTabs/index.tsx", "sources/component/CircleList.js"  ]
 }

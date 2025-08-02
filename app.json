@@ -32,6 +32,9 @@
     "plugins": [
       "expo-font",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "serverApi": "127.0.0.1:9302"
+    }
   }
 }

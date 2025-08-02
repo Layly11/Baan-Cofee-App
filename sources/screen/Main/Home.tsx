@@ -4,67 +4,66 @@ import { NavRoutes } from "@/sources/navigation"
 import { onAuthChange } from "@/sources/redux/Reducers/AuthReducers"
 import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme"
 import { clearAuthData } from "@/sources/utils/auth"
-import { useRef, useState } from "react"
-import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useEffect, useRef, useState } from "react"
+import { Image, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { FlatList, ScrollView } from "react-native-gesture-handler"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useDispatch } from "react-redux"
 import { LinearGradient } from "expo-linear-gradient";
+import { fetchBestSellerRequester, fetchCategoryRequester } from "@/sources/utils/requestUtils"
+import { getCategoryIcon } from "@/sources/common/categoryIcon"
 
 const Home = ({ navigation }: any) => {
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     const [activeBannerIndex, setActiveBannerIndex] = useState(0)
     const bannerRef = useRef(null)
     const insets = useSafeAreaInsets();
+    const [category, setCategory] = useState([])
+    const [bestSeller, setBestSeller] = useState([])
+
+    // const handleLogout = () => {
+    //     clearAuthData()
+    //     dispatch(onAuthChange(false))
+    // }
 
 
-    const handleLogout = () => {
-        clearAuthData()
-        dispatch(onAuthChange(false))
+    const fetchCatgory = async () => {
+        try {
+            const res = await fetchCategoryRequester()
+            const category = res.category
+
+            const itemsWithIcons = category.map((cat: any) => ({
+                ...cat,
+                icon: getCategoryIcon(cat.name),
+            }));
+
+            console.log(itemsWithIcons)
+            setCategory(itemsWithIcons)
+
+        } catch (err) {
+            console.error(err)
+        }
     }
 
-    const MenuItems = [
-        { id: 1, name: "Hot Coffee", icon: <SVG.HOT_COFFEE /> },
-        { id: 2, name: "Cold Coffee", icon: <SVG.COLD_COFFEE /> },
-        { id: 3, name: "Drinks", icon: <SVG.DRINKS /> },
-        { id: 4, name: "Snacks", icon: <SVG.SNACKS /> },
-    ];
+    const fetchBestSeller = async () => {
+        try {
+            const res = await fetchBestSellerRequester()
+            const bestSeller = res.bestSeller
+            console.log(`BestSeller:`,bestSeller)
+            setBestSeller(bestSeller)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+    useEffect(() => {
+        fetchCatgory()
+        fetchBestSeller()
+    },[])
 
     const Banner = [
         { id: 1, imageSource: require("../../assets/Images/Banner1.png") },
         { id: 2, imageSource: require("../../assets/Images/Banner1.png") },
         { id: 3, imageSource: require("../../assets/Images/Banner1.png") },
-    ];
-
-    const BestSellers = [
-        {
-            id: 1,
-            name: "Cappuccino",
-            Desc: "Espresso, steamed milk, milk foam, optional sugar",
-            price: "$30.00",
-            imageSource: require("../../assets/Images/Bestseller1.png"),
-        },
-        {
-            id: 2,
-            name: "Americano",
-            Desc: "Espresso, steamed milk, milk foam, optional sugar",
-            price: "$30.00",
-            imageSource: require("../../assets/Images/Bestseller2.png"),
-        },
-        {
-            id: 3,
-            name: "Cappuccino",
-            Desc: "Espresso, steamed milk, milk foam, optional sugar",
-            price: "$30.00",
-            imageSource: require("../../assets/Images/Bestseller1.png"),
-        },
-        {
-            id: 4,
-            name: "Americano",
-            Desc: "Espresso, steamed milk, milk foam, optional sugar",
-            price: "$30.00",
-            imageSource: require("../../assets/Images/Bestseller2.png"),
-        },
     ];
 
     const handleBannerScroll = (
@@ -85,7 +84,7 @@ const Home = ({ navigation }: any) => {
                     })
                 }
             >
-                {item.icon}
+                <item.icon/>
             </TouchableOpacity>
             <RNText
                 size={FontSize.font14}
@@ -104,7 +103,7 @@ const Home = ({ navigation }: any) => {
         >
             <View style={styles.imageContainer}>
                 <View style={styles.imageBackground} />
-                <RNImage source={item.imageSource} style={styles.image} />
+                <RNImage source={{ uri: item.imageSource}} style={styles.image} />
             </View>
             <LinearGradient
                 start={{ x: 0, y: 2 }}
@@ -147,11 +146,15 @@ const Home = ({ navigation }: any) => {
 
                     <View>
                         <RNText style={styles.menuTitle} >Our Menu</RNText>
-                        <View style={{ ...RNStyles.center, marginTop: hp(2) }}>
+                        <View style={{
+                            alignItems: category.length < 4 ? "flex-start" : "center",
+                            marginTop: hp(2),
+                            paddingLeft: category.length < 4 ? wp(5) : 0,
+                        }}>
                             <FlatList
-                                data={MenuItems}
+                                data={category}
                                 renderItem={renderMenuItem}
-                                keyExtractor={(item) => item.id.toString()}
+                                keyExtractor={(item: any) => item.id.toString()}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={{ gap: wp(5) }}
@@ -211,9 +214,9 @@ const Home = ({ navigation }: any) => {
                     <View>
                         <RNText style={styles.menuTitle} >Best Seller</RNText>
                         <FlatList
-                            data={BestSellers}
+                            data={bestSeller}
                             renderItem={renderBestSeller}
-                            keyExtractor={(item) => item.id.toString()}
+                            keyExtractor={(item:any) => item.id.toString()}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ gap: wp(3), paddingHorizontal: wp(4) }}
@@ -295,8 +298,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Brown,
     },
     image: {
-        width: wp(35),
-        height: wp(35),
+        width: wp(40),
+        height: wp(40),
     },
     infoContainer: {
         gap: hp(1),
