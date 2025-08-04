@@ -120,10 +120,6 @@ const Menu = ({ navigation, route }: any) => {
       setIsLoading(false)
     }
   }
-  useEffect(() => {
-    fetchCatgory()
-    fetchProductData()
-  }, [])
 
   useFocusEffect(
     useCallback(() => {
