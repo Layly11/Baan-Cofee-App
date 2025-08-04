@@ -71,17 +71,6 @@ const Home = ({ navigation }: any) => {
             setIsLoading(false)
         }
     }
-    useEffect(() => {
-        const init = async () => {
-            try {
-                await fetchCatgory();
-                await fetchBestSeller();
-            } catch (err) {
-                console.error(err);
-            }
-        };
-        init();
-    }, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -93,9 +82,9 @@ const Home = ({ navigation }: any) => {
     );
 
     const Banner = [
-        { id: 1, imageSource: require("../../assets/Images/Banner1.png") },
-        { id: 2, imageSource: require("../../assets/Images/Banner1.png") },
-        { id: 3, imageSource: require("../../assets/Images/Banner1.png") },
+        { id: 1, imageSource:'https://baancoffee.blob.core.windows.net/banner/Banner1.png' },
+        { id: 2, imageSource: 'https://baancoffee.blob.core.windows.net/banner/Banner1.png' },
+        { id: 3, imageSource: 'https://baancoffee.blob.core.windows.net/banner/Banner1.png' },
     ];
 
     const handleBannerScroll = (
@@ -222,7 +211,7 @@ const Home = ({ navigation }: any) => {
                             scrollEventThrottle={16}
                             renderItem={({ item }) => (
                                 <RNImage
-                                    source={item.imageSource}
+                                    source={{ uri: item.imageSource}}
                                     style={{
                                         width: wp(85),
                                         height: hp(18),

@@ -55,135 +55,14 @@ function describeArc(x: any, y: any, radius: any, startAngle: any, endAngle: any
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 }
 
-const productData: any = {
-  "Hot Coffee": [
-    {
-      id: 1,
-      title: "Classic Hot Coffee",
-      desc: "Milk, instant Arabica coffee powder, sugar",
-      price: "$30.00",
-      image: require("../../assets/Images/HotCoffee1.png"),
-    },
-    {
-      id: 2,
-      title: "Cappuccino",
-      desc: "Espresso, steamed milk, milk foam",
-      price: "$28.00",
-      image: require("../../assets/Images/HotCoffee2.png"),
-    },
-    {
-      id: 3,
-      title: "Espresso",
-      desc: "Finely ground coffee beans, hot water",
-      price: "$22.00",
-      image: require("../../assets/Images/HotCoffee3.png"),
-    },
-    {
-      id: 4,
-      title: "Hot Latte",
-      desc: "Creamy espresso blend",
-      price: "$28.00",
-      image: require("../../assets/Images/HotCoffee4.png"),
-    },
-    {
-      id: 5,
-      title: "Hot Americano",
-      desc: "Bold espresso with hot water",
-      price: "$25.00",
-      image: require("../../assets/Images/HotCoffee5.png"),
-    },
-  ],
-  "Cold Coffee": [
-    {
-      id: 1,
-      title: "Iced Americano",
-      desc: "Creamy blend of espresso, steamed milk, and frothy milk foam",
-      price: "$30.00",
-      image: require("../../assets/Images/ColdCoffee.png"),
-    },
-    {
-      id: 2,
-      title: "Hazelnut Freppino",
-      desc: "Espresso shot, hazelnut syrup, milk, ice, whipped cream",
-      price: "$32.00",
-      image: require("../../assets/Images/ColdCoffee2.png"),
-    },
-    {
-      id: 3,
-      title: " Popcorn Cold Coffee",
-      desc: "Finely ground coffee, sugar, corn syrup, ice, whipped cream, chocolate sauce",
-      price: "$30.00",
-      image: require("../../assets/Images/ColdCoffee3.png"),
-    },
-    {
-      id: 4,
-      title: "Freppino",
-      desc: "Blended cold espresso and cream",
-      price: "$32.00",
-      image: require("../../assets/Images/ColdCoffee4.png"),
-    },
-  ],
-  Drinks: [
-    {
-      id: 1,
-      title: "Café Frappe",
-      desc: "Cream-blended, vanilla ice cream topped cold coffee",
-      price: "$40.00",
-      image: require("../../assets/Images/Drinks1.png"),
-    },
-    {
-      id: 2,
-      title: "Affogato",
-      desc: "Single scoop of vanilla ice cream topped with dark roast espresso",
-      price: "$30.00",
-      image: require("../../assets/Images/Drinks2.png"),
-    },
-    {
-      id: 3,
-      title: "Gingerbread Frappe",
-      desc: "Gingerbread syrup, roasted coffee, vanilla essence, whipped cream, nutmeg",
-      price: "$35.00",
-      image: require("../../assets/Images/Drinks3.png"),
-    },
-  ],
-  Snacks: [
-    {
-      id: 1,
-      title: "Choco Muffin",
-      desc: "Moist chocolate muffin with chips",
-      price: "$18.00",
-      image: require("../../assets/Images/ColdCoffee4.png"),
-    },
-    {
-      id: 2,
-      title: "Chocolate Chip Cookie",
-      desc: "Chocolate chip cookie with a scoop of vanilla ice cream",
-      price: "$15.00",
-      image: require("../../assets/Images/ColdCoffee5.png"),
-    },
-    {
-      id: 3,
-      title: "Choco ",
-      desc: "Moist chocolate muffin with chips",
-      price: "$18.00",
-      image: require("../../assets/Images/ColdCoffee4.png"),
-    },
-    {
-      id: 4,
-      title: "Chocolate Chip ",
-      desc: "Chocolate chip cookie with a scoop of vanilla ice cream",
-      price: "$15.00",
-      image: require("../../assets/Images/ColdCoffee5.png"),
-    },
-  ],
-};
 
 const Menu = ({ navigation, route }: any) => {
   const [categories, setCategory] = useState<{ label: string; icon: React.ComponentType<any> }[]>([])
   const [productData, setProductData] = useState<Record<string, any[]>>({})
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false)
-  
+  const [isReady, setIsReady] = useState(false)
+
 
   const fetchCatgory = async () => {
     setIsLoading(true)
@@ -247,7 +126,7 @@ const Menu = ({ navigation, route }: any) => {
       fetchCatgory()
       fetchProductData()
     }, 10000)
-}
+  }
 
   const initialIndex = React.useMemo(() => {
     if (route?.params?.category) {
@@ -298,8 +177,9 @@ const Menu = ({ navigation, route }: any) => {
         animated: false,
       });
       setCenterIndex(initialProductIndex);
+      setIsReady(true); 
     });
-  
+
     return () => task.cancel();
   }, [selectedCategory]);
 
@@ -310,66 +190,16 @@ const Menu = ({ navigation, route }: any) => {
   const startAngle = selectedAngle - 0.15;
   const endAngle = selectedAngle + 0.15;
 
-  const renderProductText = () => {
-    return repeatedDrinks.map((item, index) => {
-      const inputRange = [
-        (index - 1) * ITEM_WIDTH,
-        index * ITEM_WIDTH,
-        (index + 1) * ITEM_WIDTH,
-      ];
-      const opacity = scrollX.interpolate({
-        inputRange,
-        outputRange: [0, 1, 0],
-        extrapolate: "clamp",
-      });
-      const translateY = scrollX.interpolate({
-        inputRange,
-        outputRange: [10, 0, 10],
-        extrapolate: "clamp",
-      });
-
-      return (
-        <Animated.View
-          key={"text-" + index}
-          style={{
-            position: "absolute",
-            width: wp(50),
-            opacity,
-            transform: [{ translateY }],
-            alignItems: "center",
-          }}
-        >
-          <RNText
-            size={FontSize.font22}
-            family={FontFamily.Black}
-            align="center"
-          >{item.title}</RNText>
-          <RNText
-            size={FontSize.font15}
-            family={FontFamily.Medium}
-            align="center"
-            numberOfLines={3}
-          >{item.desc}</RNText>
-          <RNText
-            size={FontSize.font22}
-            family={FontFamily.Bold}
-            align="center"
-          >{item.price}</RNText>
-        </Animated.View>
-      );
-    });
-  };
-
   if (isLoading || hasError) {
     return (
-        <View style={[styles.root, RNStyles.center]}>
-            <ActivityIndicator size="large" color={Colors.Brown} />
-            <RNText style={{ marginTop: 10, color: Colors.Brown }}>
-                Loading...
-            </RNText>
-        </View>
+      <View style={[styles.root, RNStyles.center]}>
+        <ActivityIndicator size="large" color={Colors.Brown} />
+        <RNText style={{ marginTop: 10, color: Colors.Brown }}>
+          Loading...
+        </RNText>
+      </View>
     )
-}
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -433,7 +263,7 @@ const Menu = ({ navigation, route }: any) => {
         })}
 
         <View style={styles.circleContainer}>
-          <Animated.FlatList
+          {isReady && (<Animated.FlatList
             key={selectedCategory}
             ref={flatListRef}
             data={repeatedDrinks}
@@ -479,21 +309,25 @@ const Menu = ({ navigation, route }: any) => {
             }}
             renderItem={({ item, index }) => {
               if (!item?.title) return <View style={{ width: ITEM_WIDTH }} />;
+
               const inputRange = [
                 (index - 2) * ITEM_WIDTH,
                 (index - 1) * ITEM_WIDTH,
                 index * ITEM_WIDTH,
               ];
+
               const scale = scrollX.interpolate({
                 inputRange,
                 outputRange: [0.8, 1, 0.8],
                 extrapolate: "clamp",
               });
+
               const translateY = scrollX.interpolate({
                 inputRange,
                 outputRange: [hp(12), 0, hp(12)],
                 extrapolate: "clamp",
               });
+
               return (
                 <Animated.View
                   style={[
@@ -506,18 +340,42 @@ const Menu = ({ navigation, route }: any) => {
                 >
                   <TouchableOpacity
                     style={styles.productImageContainer}
-                    onPress={() =>
-                      navigation.navigate(NavRoutes.PRODUCT, { product: item })
-                    }
+                    onPress={() => navigation.navigate(NavRoutes.PRODUCT, { product: item })}
                   >
                     <RNImage source={{ uri: item.image }} style={styles.productImage} />
                   </TouchableOpacity>
+
+                  <View style={{ marginTop: hp(2), alignItems: 'center' }}>
+                    <RNText
+                      size={FontSize.font22}
+                      family={FontFamily.Black}
+                      align="center"
+                    >
+                      {item.title}
+                    </RNText>
+                    <RNText
+                      size={FontSize.font15}
+                      family={FontFamily.Medium}
+                      align="center"
+                      numberOfLines={3}
+                    >
+                      {item.desc}
+                    </RNText>
+                    <RNText
+                      size={FontSize.font22}
+                      family={FontFamily.Bold}
+                      align="center"
+                    >
+                      {item.price}
+                    </RNText>
+                  </View>
                 </Animated.View>
               );
             }}
-          />
+          />)}
+        
 
-          <View style={styles.bottomContainer}>{renderProductText()}</View>
+
         </View>
       </View>
 
@@ -565,7 +423,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: Colors.White,
-},
+  },
   header: {
     backgroundColor: Colors.DarkBrown,
     paddingTop: isIOS ? hp(7) : hp(5),
