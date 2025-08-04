@@ -62,6 +62,17 @@ const Menu = ({ navigation, route }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const [layoutReady, setLayoutReady] = useState(false);
+
+  useEffect(() => {
+    if (!isReady) return;
+  
+    const timer = setTimeout(() => {
+      setLayoutReady(true);
+    }, 100); // 30–100ms แล้วแต่เครื่อง
+  
+    return () => clearTimeout(timer);
+  }, [isReady]);
 
 
   const fetchCatgory = async () => {
@@ -263,7 +274,7 @@ const Menu = ({ navigation, route }: any) => {
         })}
 
         <View style={styles.circleContainer}>
-          {isReady && (<Animated.FlatList
+          {layoutReady && (<Animated.FlatList
             key={selectedCategory}
             ref={flatListRef}
             data={repeatedDrinks}
