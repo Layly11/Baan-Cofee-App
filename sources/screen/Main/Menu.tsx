@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { RNHeader, RNImage, RNStyles, RNText } from "../../common";
@@ -22,6 +23,8 @@ import SVG from "../../constants/Svg";
 import { NavRoutes } from "../../navigation";
 import { fetchCategoryRequester, fetchProductDataRequester } from "@/sources/utils/requestUtils";
 import { getCategoryIcon } from "@/sources/common/categoryIcon";
+import { useFocusEffect } from "@react-navigation/native";
+import { InteractionManager } from "react-native";
 
 const { width } = Dimensions.get("window");
 const HEADER_TOP_PADDING = isIOS ? hp(5) : hp(5);
@@ -38,33 +41,21 @@ const ANGLE_BETWEEN = Math.PI / (ITEM_COUNT - 1);
 const ITEM_WIDTH = wp(55);
 const SPACER_WIDTH = (wp(100) - ITEM_WIDTH) / 2;
 
-function polarToCartesian(centerX:any, centerY:any, radius:any, angleInRad:any) {
+function polarToCartesian(centerX: any, centerY: any, radius: any, angleInRad: any) {
   return {
     x: centerX + radius * Math.cos(angleInRad),
     y: centerY + radius * Math.sin(angleInRad),
   };
 }
 
-function describeArc(x:any, y:any, radius:any, startAngle:any, endAngle:any) {
+function describeArc(x: any, y: any, radius: any, startAngle: any, endAngle: any) {
   const start = polarToCartesian(x, y, radius, endAngle);
   const end = polarToCartesian(x, y, radius, startAngle);
   const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 }
 
-// const categories = [
-//   { label: "Snacks", icon: SVG.SNACKS },
-//   { label: "Snacks", icon: SVG.SNACKS },
-//   { label: "Hot Coffee", icon: SVG.HOT_COFFEE },
-//   { label: "Cold Coffee", icon: SVG.COLD_COFFEE },
-//   { label: "Drinks", icon: SVG.DRINKS },
-//   { label: "Snacks", icon: SVG.SNACKS },
-//   { label: "Snacks", icon: SVG.SNACKS },
-//   { label: "Snacks", icon: SVG.SNACKS },
-// ];
-
-
-const productData:any = {
+const productData: any = {
   "Hot Coffee": [
     {
       id: 1,
@@ -96,7 +87,7 @@ const productData:any = {
     },
     {
       id: 5,
-      title: "Hot Americano", 
+      title: "Hot Americano",
       desc: "Bold espresso with hot water",
       price: "$25.00",
       image: require("../../assets/Images/HotCoffee5.png"),
@@ -187,48 +178,77 @@ const productData:any = {
   ],
 };
 
-const Menu = ({ navigation, route }:any) => {
+const Menu = ({ navigation, route }: any) => {
   const [categories, setCategory] = useState<{ label: string; icon: React.ComponentType<any> }[]>([])
   const [productData, setProductData] = useState<Record<string, any[]>>({})
-  const fetchCatgory = async () => {
-    try {
-        const res = await fetchCategoryRequester()
-        const category = res.category
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false)
   
-        const itemsWithIcons = category.map((cat: any) => ({
-            id: cat.id,
-            label: cat.name,
-            icon: getCategoryIcon(cat.name),
-        }));
 
-        const categoryWithIcon = [
-          { label: "Snacks", icon: SVG.SNACKS },
-          { label: "Snacks", icon: SVG.SNACKS },
-          ...itemsWithIcons,
-          { label: "Snacks", icon: SVG.SNACKS },
-          { label: "Snacks", icon: SVG.SNACKS },
-        ]
-        setCategory(categoryWithIcon)
-  
+  const fetchCatgory = async () => {
+    setIsLoading(true)
+    try {
+      const res = await fetchCategoryRequester()
+      const category = res.category
+
+      const itemsWithIcons = category.map((cat: any) => ({
+        id: cat.id,
+        label: cat.name,
+        icon: getCategoryIcon(cat.name),
+      }));
+
+      const categoryWithIcon = [
+        { label: "Snacks", icon: SVG.SNACKS },
+        { label: "Snacks", icon: SVG.SNACKS },
+        ...itemsWithIcons,
+        { label: "Snacks", icon: SVG.SNACKS },
+        { label: "Snacks", icon: SVG.SNACKS },
+      ]
+      setCategory(categoryWithIcon)
+      setHasError(false)
     } catch (err) {
-        console.error(err)
+      setHasError(true)
+      console.error(err)
+      retryFetch()
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchProductData = async () => {
+    setIsLoading(true)
     try {
       const res = await fetchProductDataRequester()
-      console.log("ProductData: ",res.productData)
+      console.log("ProductData: ", res.productData)
       setProductData(res.productData)
+      setHasError(false)
     } catch (err) {
+      setHasError(true)
       console.error(err)
+      retryFetch()
+    } finally {
+      setIsLoading(false)
     }
   }
   useEffect(() => {
     fetchCatgory()
     fetchProductData()
-  },[])
-  
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCatgory();
+      fetchProductData();
+    }, [])
+  );
+
+  const retryFetch = () => {
+    setTimeout(() => {
+      fetchCatgory()
+      fetchProductData()
+    }, 10000)
+}
+
   const initialIndex = React.useMemo(() => {
     if (route?.params?.category) {
       const index = categories.findIndex(
@@ -241,7 +261,7 @@ const Menu = ({ navigation, route }:any) => {
 
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
-  
+
 
   useEffect(() => {
     if (route?.params?.category) {
@@ -271,14 +291,20 @@ const Menu = ({ navigation, route }:any) => {
   const [centerIndex, setCenterIndex] = useState(initialProductIndex);
 
   useEffect(() => {
-    setTimeout(() => {
+    scrollX.setValue(ITEM_WIDTH * initialProductIndex) // <--- Reset ค่า scrollX
+    const task = InteractionManager.runAfterInteractions(() => {
       flatListRef.current?.scrollToOffset({
         offset: ITEM_WIDTH * initialProductIndex,
         animated: false,
-      })
+      });
       setCenterIndex(initialProductIndex);
-    }, 50);
+    });
+  
+    return () => task.cancel();
   }, [selectedCategory]);
+
+
+
 
   const selectedAngle = selectedIndex * ANGLE_BETWEEN - Math.PI;
   const startAngle = selectedAngle - 0.15;
@@ -333,6 +359,17 @@ const Menu = ({ navigation, route }:any) => {
       );
     });
   };
+
+  if (isLoading || hasError) {
+    return (
+        <View style={[styles.root, RNStyles.center]}>
+            <ActivityIndicator size="large" color={Colors.Brown} />
+            <RNText style={{ marginTop: 10, color: Colors.Brown }}>
+                Loading...
+            </RNText>
+        </View>
+    )
+}
 
   return (
     <View style={{ flex: 1 }}>
@@ -397,6 +434,7 @@ const Menu = ({ navigation, route }:any) => {
 
         <View style={styles.circleContainer}>
           <Animated.FlatList
+            key={selectedCategory}
             ref={flatListRef}
             data={repeatedDrinks}
             keyExtractor={(_, index) => "drink-" + index}
@@ -407,6 +445,12 @@ const Menu = ({ navigation, route }:any) => {
             bounces={false}
             scrollEventThrottle={16}
             removeClippedSubviews={false}
+            initialScrollIndex={initialProductIndex}
+            getItemLayout={(_, index) => ({
+              length: ITEM_WIDTH,
+              offset: ITEM_WIDTH * index,
+              index,
+            })}
             contentContainerStyle={{
               paddingHorizontal: SPACER_WIDTH,
               left: isIOS ? wp(-20) : wp(-40),
@@ -466,7 +510,7 @@ const Menu = ({ navigation, route }:any) => {
                       navigation.navigate(NavRoutes.PRODUCT, { product: item })
                     }
                   >
-                    <RNImage source={{uri:item.image }} style={styles.productImage} />
+                    <RNImage source={{ uri: item.image }} style={styles.productImage} />
                   </TouchableOpacity>
                 </Animated.View>
               );
@@ -479,7 +523,7 @@ const Menu = ({ navigation, route }:any) => {
 
       {filteredDrinks.length > 0 && (
         <View style={styles.dotsContainer}>
-          {filteredDrinks.map((_:any, index:any) => {
+          {filteredDrinks.map((_: any, index: any) => {
             const dotInputRange = [
               (index + filteredDrinks.length - 1) * ITEM_WIDTH,
               (index + filteredDrinks.length) * ITEM_WIDTH,
@@ -518,6 +562,10 @@ const Menu = ({ navigation, route }:any) => {
 export default Menu;
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.White,
+},
   header: {
     backgroundColor: Colors.DarkBrown,
     paddingTop: isIOS ? hp(7) : hp(5),
@@ -580,7 +628,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: wp(65),
     height: wp(65),
-    borderRadius: wp(65), 
+    borderRadius: wp(65),
     resizeMode: "contain",
     marginTop: -hp(5),
   },

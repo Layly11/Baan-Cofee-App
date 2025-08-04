@@ -4,14 +4,15 @@ import { NavRoutes } from "@/sources/navigation"
 import { onAuthChange } from "@/sources/redux/Reducers/AuthReducers"
 import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme"
 import { clearAuthData } from "@/sources/utils/auth"
-import { useEffect, useRef, useState } from "react"
-import { Image, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { ActivityIndicator, Image, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { FlatList, ScrollView } from "react-native-gesture-handler"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useDispatch } from "react-redux"
 import { LinearGradient } from "expo-linear-gradient";
 import { fetchBestSellerRequester, fetchCategoryRequester } from "@/sources/utils/requestUtils"
 import { getCategoryIcon } from "@/sources/common/categoryIcon"
+import { useFocusEffect } from "@react-navigation/native"
 
 const Home = ({ navigation }: any) => {
     // const dispatch = useDispatch()
@@ -20,14 +21,19 @@ const Home = ({ navigation }: any) => {
     const insets = useSafeAreaInsets();
     const [category, setCategory] = useState([])
     const [bestSeller, setBestSeller] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasError, setHasError] = useState(false)
 
-    // const handleLogout = () => {
-    //     clearAuthData()
-    //     dispatch(onAuthChange(false))
-    // }
 
+    const retryFetch = () => {
+        setTimeout(() => {
+            fetchBestSeller()
+            fetchCatgory()
+        }, 10000)
+    }
 
     const fetchCatgory = async () => {
+        setIsLoading(true)
         try {
             const res = await fetchCategoryRequester()
             const category = res.category
@@ -39,26 +45,52 @@ const Home = ({ navigation }: any) => {
 
             console.log(itemsWithIcons)
             setCategory(itemsWithIcons)
-
+            setHasError(false)
         } catch (err) {
+            setHasError(true)
             console.error(err)
+            retryFetch()
+        } finally {
+            setIsLoading(false)
         }
     }
 
     const fetchBestSeller = async () => {
+        setIsLoading(true)
         try {
             const res = await fetchBestSellerRequester()
             const bestSeller = res.bestSeller
-            console.log(`BestSeller:`,bestSeller)
+            console.log(`BestSeller:`, bestSeller)
             setBestSeller(bestSeller)
+            setHasError(false)
         } catch (err) {
+            setHasError(true)
             console.error(err)
+            retryFetch()
+        } finally {
+            setIsLoading(false)
         }
     }
     useEffect(() => {
-        fetchCatgory()
-        fetchBestSeller()
-    },[])
+        const init = async () => {
+            try {
+                await fetchCatgory();
+                await fetchBestSeller();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        init();
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchCatgory()
+            fetchBestSeller()
+            return () => {
+            };
+        }, [])
+    );
 
     const Banner = [
         { id: 1, imageSource: require("../../assets/Images/Banner1.png") },
@@ -84,7 +116,7 @@ const Home = ({ navigation }: any) => {
                     })
                 }
             >
-                <item.icon/>
+                <item.icon />
             </TouchableOpacity>
             <RNText
                 size={FontSize.font14}
@@ -103,7 +135,7 @@ const Home = ({ navigation }: any) => {
         >
             <View style={styles.imageContainer}>
                 <View style={styles.imageBackground} />
-                <RNImage source={{ uri: item.imageSource}} style={styles.image} />
+                <RNImage source={{ uri: item.imageSource }} style={styles.image} />
             </View>
             <LinearGradient
                 start={{ x: 0, y: 2 }}
@@ -130,6 +162,18 @@ const Home = ({ navigation }: any) => {
             </View>
         </TouchableOpacity>
     )
+
+
+    if (isLoading || hasError) {
+        return (
+            <View style={[styles.root, RNStyles.center]}>
+                <ActivityIndicator size="large" color={Colors.Brown} />
+                <RNText style={{ marginTop: 10, color: Colors.Brown }}>
+                    Loading...
+                </RNText>
+            </View>
+        )
+    }
 
     return (
         <View style={[styles.root, { paddingBottom: insets.bottom }]}>
@@ -216,7 +260,7 @@ const Home = ({ navigation }: any) => {
                         <FlatList
                             data={bestSeller}
                             renderItem={renderBestSeller}
-                            keyExtractor={(item:any) => item.id.toString()}
+                            keyExtractor={(item: any) => item.id.toString()}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ gap: wp(3), paddingHorizontal: wp(4) }}
