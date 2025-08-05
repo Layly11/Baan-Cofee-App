@@ -16,6 +16,8 @@ import Drinks from "../assets/Svg/Drinks.svg";
 import Snacks from "../assets/Svg/Snacks.svg";
 import Search from "../assets/Svg/Search.svg";
 import Bread from "../assets/Svg/Bread.svg"
+import Edit from "../assets/Svg/Edit.svg";
+import Right from "../assets/Svg/Right.svg";
 
 const SVG = {
     ADD: Add,
@@ -35,7 +37,9 @@ const SVG = {
     DRINKS: Drinks,
     SNACKS: Snacks,
     SEARCH: Search,
-    BREAD: Bread
+    BREAD: Bread,
+    EDIT: Edit,
+    RIGHT: Right,
 }
 
 export default SVG;

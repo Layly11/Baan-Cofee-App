@@ -8,10 +8,12 @@ import NavConfigs from "./NavConfigs";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthRoute from "./AuthRoute";
 import { ImageBackground } from "react-native";
-import { getAuthToken } from "../utils/auth";
+import { clearAuthData, getAuthToken } from "../utils/auth";
 import AppRoute from "./AppRoute";
+import {isTokenExpired} from '../utils/jwt'
 
 const Stack = createStackNavigator();
+
 
 const Routes = () => {
     const { isAuth } = useSelector((state:any) => state.Auth);
@@ -21,9 +23,15 @@ const Routes = () => {
     useEffect(() => {
         const checkAuth = async () => {
             const token = await getAuthToken()
-            setIsAuthenticated(!!token)
-            if(token) {
+            if(token && !isTokenExpired(token)) {
                 dispatch(onAuthChange(true))
+                setIsAuthenticated(true)
+            } else{
+                dispatch(onAuthChange(false))
+                dispatch(setAsyncStorageValue({}));
+                setIsAuthenticated(false)
+                clearAuthData()
+
             }
         }
         checkAuth()

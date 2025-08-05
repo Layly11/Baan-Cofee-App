@@ -1,7 +1,9 @@
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator} from "@react-navigation/drawer";
 import NavConfigs from "../NavConfigs";
 import { wp } from "@/sources/theme";
 import Index from "../BottomTabs";
+
+import DrawerContent from './DrawerContent'
 
 const Drawer = createDrawerNavigator()
 const DrawerNavigator = () => {
@@ -14,6 +16,7 @@ const DrawerNavigator = () => {
                     width: wp(80),
                 },
             }}
+            drawerContent={(props) => <DrawerContent {...props}/>}
         >
             <Drawer.Screen name="BottomTabs" component={Index}/>
         </Drawer.Navigator>
