@@ -28,6 +28,55 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
     }
 }
 
+export const verifyOtpRequester = async ({ email, otp }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/verify-otp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, otp })
+        })
+
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            const err: any = new Error(json.res_desc || "Something went wrong");
+            err.res_code = json.res_code;
+            throw err;
+        }
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const resendOtpRequester = async ({ email }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/resend-otp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            const err: any = new Error(json.res_desc || "Something went wrong");
+            err.res_code = json.res_code;
+            throw err;
+        }
+
+    } catch (error) {
+         console.error(error)
+        throw error;
+    }
+};
+
 export const LoginCustomerRequester = async ({ email, password }: any) => {
     try {
         const res = await fetch(`http://${SERVER_API}/customer/login`, {
