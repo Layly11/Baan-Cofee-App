@@ -72,7 +72,7 @@ export const resendOtpRequester = async ({ email }: any) => {
         }
 
     } catch (error) {
-         console.error(error)
+        console.error(error)
         throw error;
     }
 };

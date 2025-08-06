@@ -23,6 +23,7 @@ import { registerCustomerRequester } from "@/sources/utils/requestUtils";
 import { ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
 import validator from 'validator'
 import { useFocusEffect } from "@react-navigation/native";
+
 const Register = ({ navigation }: any) => {
     const dispatch = useDispatch();
     const insets = useSafeAreaInsets();
@@ -34,6 +35,11 @@ const Register = ({ navigation }: any) => {
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const isPasswordStrong = (password: string): boolean => {
+        const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\W_]{8,}$/;
+        return passwordPolicy.test(password);
+    };
 
 
     useFocusEffect(
@@ -49,8 +55,13 @@ const Register = ({ navigation }: any) => {
     );
 
     const handleRegister = async () => {
-        if (!name.trim() || !validator.isEmail(email) || password.length < 6 || phone.length !== 10) {
-            alert('Please fill in all fields correctly.')
+        if (!name.trim() || !validator.isEmail(email) || phone.length !== 10) {
+            alert('Please fill in all fields correctly.');
+            return;
+        }
+        console.log("Password: ",password)
+        if (!isPasswordStrong(password)) {
+            alert('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
             return;
         }
 

@@ -42,10 +42,18 @@ const Login = ({ navigation }: any) => {
                     navigation.navigate(NavRoutes.OTP, { email, password, redirectAfter: "login" });
                     alert('Account not verified. Please verify your email before logging in.')
                     await resendOtpRequester({ email });
-                } catch (err) {
+                } catch (err:any) {
+                    if(err.res_code === "0499"){
+                        alert(err.message)
+                        return
+                    }
                     alert("Failed to resend OTP. Please try again later.");
                     console.error(err);
                 }
+            }
+
+            if(err.res_code === '0488') {
+                alert(err.message)
             }
         }
     };

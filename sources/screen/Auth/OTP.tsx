@@ -40,7 +40,11 @@ const OTP = ({ navigation, route }: any) => {
                 navigation.navigate(NavRoutes.LOGIN);
               }
         } catch (err: any) {
-            console.log(err.res_code)
+            console.log(err.message)
+            if(err.res_code === '0499') {
+             alert(err.message)
+             return
+            }
             alert('OTP Invalid. Please try again')
         }
     };
@@ -61,7 +65,12 @@ const OTP = ({ navigation, route }: any) => {
             alert("OTP has been resent to your email.");
             setOtp(["", "", "", "", "", ""]);
             otpRefs.current[0]?.focus();
-        } catch (err) {
+        } catch (err:any) {
+            console.log(err.res_code)
+            if(err.res_code === '0499') {
+                alert(err.message)
+                return
+            }
             alert("Failed to resend OTP. Please try again.");
             console.error(err);
         }
