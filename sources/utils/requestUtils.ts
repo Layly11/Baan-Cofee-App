@@ -28,6 +28,33 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
     }
 }
 
+export const checkCustomerExistRequester = async ({email,phone}:any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/check-customer?email=${email}&phone=${phone}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        console.log('Data: ', data.data)
+
+        return data.data
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
 export const verifyOtpRequester = async ({ email, otp }: any) => {
     try {
         const res = await fetch(`http://${SERVER_API}/customer/verify-otp`, {
@@ -95,7 +122,6 @@ export const LoginCustomerRequester = async ({ email, password }: any) => {
             err.res_code = data.res_code;
             throw err;
         }
-        console.log('Data: ', data.data)
 
         return data.data
     } catch (error) {
@@ -103,6 +129,85 @@ export const LoginCustomerRequester = async ({ email, password }: any) => {
         throw error;
     }
 }
+
+export const forgotPasswordRequester = async ({ email }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/forgot-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email })
+        })
+
+        const data = await res.json();
+
+        console.log("Data: ", data)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const resendResetOtpRequester = async ({ email }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/resend-reset-otp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email })
+        })
+
+        const data = await res.json();
+
+        console.log("Data: ", data)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const verifyResetOtpRequester = async ({ email, otp }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/verify-reset-otp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, otp })
+        })
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
 
 export const fetchCategoryRequester = async () => {
     try {

@@ -5,9 +5,9 @@ import { NavRoutes } from "@/sources/navigation";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { saveAuthData } from "@/sources/utils/auth";
-import { LoginCustomerRequester, resendOtpRequester, verifyOtpRequester } from "@/sources/utils/requestUtils";
+import { LoginCustomerRequester, resendOtpRequester, resendResetOtpRequester, verifyOtpRequester, verifyResetOtpRequester } from "@/sources/utils/requestUtils";
 import { useRef, useState } from "react";
-import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native"
+import { Alert, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native"
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
@@ -15,39 +15,54 @@ import { useDispatch } from "react-redux";
 const OTP = ({ navigation, route }: any) => {
     const insets = useSafeAreaInsets();
     const dispatch = useDispatch();
-    const { email, password, redirectAfter  } = route.params;
+    const { email, password, redirectAfter } = route.params;
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const otpRefs = useRef([]) as any;
 
 
     const handleNext = async () => {
         if (otp.join("").length !== 6) {
-            alert("Enter full 6-digit OTP");
+            Alert.alert("OTP Invalid", "Enter full 6-digit OTP");
             return;
         }
 
         try {
             const joinedOtp = otp.join("");
             await verifyOtpRequester({ email, otp: joinedOtp })
-            alert('OTP Verified Successfully!.\nYour account has been verified.')
+            Alert.alert('OTP Verified Successfully!', 'Your account has been verified.')
 
             if (redirectAfter === 'login') {
                 const res = await LoginCustomerRequester({ email, password })
                 await saveAuthData(res.data.token)
                 dispatch(onAuthChange(true))
                 dispatch(setAsyncStorageValue({ user: res.data.customer }));
-              } else {
+            } else {
                 navigation.navigate(NavRoutes.LOGIN);
-              }
+            }
         } catch (err: any) {
             console.log(err.message)
-            if(err.res_code === '0499') {
-             alert(err.message)
-             return
+            if (err.res_code === '0499') {
+                Alert.alert('Too many OTP attempts', err.message)
+                return
             }
-            alert('OTP Invalid. Please try again')
+            Alert.alert('OTP Invalid', 'Please try again')
         }
     };
+
+    const handelResetPassword = async () => {
+        if (otp.join("").length !== 6) {
+            Alert.alert("OTP Invalid", "Enter full 6-digit OTP");
+            return;
+        }
+
+        try {
+            const joinedOtp = otp.join("");
+            await verifyResetOtpRequester({ email, otp: joinedOtp })
+            navigation.navigate(NavRoutes.LOGIN);
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     const handleOtpChange = (text: string, index: number) => {
         if (text.length > 1) return;
@@ -61,17 +76,32 @@ const OTP = ({ navigation, route }: any) => {
 
     const handleResendOtp = async () => {
         try {
-            await resendOtpRequester({ email });
-            alert("OTP has been resent to your email.");
-            setOtp(["", "", "", "", "", ""]);
-            otpRefs.current[0]?.focus();
-        } catch (err:any) {
+            if (redirectAfter === 'forgot') {
+                await resendResetOtpRequester({ email })
+                Alert.alert("OTP has been resent", "OTP has been resent to your email.");
+                setOtp(["", "", "", "", "", ""]);
+                otpRefs.current[0]?.focus();
+            } else {
+                await resendOtpRequester({ email });
+                Alert.alert("OTP has been resent", "OTP has been resent to your email.");
+                setOtp(["", "", "", "", "", ""]);
+                otpRefs.current[0]?.focus();
+            }
+        } catch (err: any) {
             console.log(err.res_code)
-            if(err.res_code === '0499') {
-                alert(err.message)
+            if (err.res_code === '0499') {
+                Alert.alert('Too many OTP attempts', err.message)
                 return
             }
-            alert("Failed to resend OTP. Please try again.");
+            if(err.res_code === '0477'){
+                 Alert.alert('Too many OTP attempts', err.message)
+                return
+            }
+            if(err.res_code === '0413') {
+                Alert.alert('Too many OTP attempts', 'Please wait a moment before requesting a new OTP.')
+                return
+            }
+            Alert.alert("Failed to resend OTP", "Please try again.");
             console.error(err);
         }
     }
@@ -131,7 +161,7 @@ const OTP = ({ navigation, route }: any) => {
                                 color={Colors.White}
                                 align="center"
                                 pTop={hp(0)}
-                            >Verify Your Number</RNText>
+                            >Verify Your OTP</RNText>
                             <View style={{ gap: hp(1.5) }}>
                                 <RNText
                                     size={FontSize.font14}
@@ -167,7 +197,7 @@ const OTP = ({ navigation, route }: any) => {
                             <RNButton
                                 title={"Next"}
                                 style={{ bottom: isIOS ? hp(3) : hp(5) }}
-                                onPress={handleNext}
+                                onPress={redirectAfter === 'forgot' ? handelResetPassword : handleNext}
                             />
                         </View>
                     </TouchableWithoutFeedback>

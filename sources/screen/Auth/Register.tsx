@@ -7,6 +7,7 @@ import { Colors, FontFamily, FontSize, hp, isIOS, wp } from "@/sources/theme";
 import { useCallback, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    Alert,
     ImageBackground,
     Keyboard,
     KeyboardAvoidingView,
@@ -19,7 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import SVG from "@/sources/constants/Svg";
-import { registerCustomerRequester } from "@/sources/utils/requestUtils";
+import { checkCustomerExistRequester, registerCustomerRequester } from "@/sources/utils/requestUtils";
 import { ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
 import validator from 'validator'
 import { useFocusEffect } from "@react-navigation/native";
@@ -56,29 +57,33 @@ const Register = ({ navigation }: any) => {
 
     const handleRegister = async () => {
         if (!name.trim() || !validator.isEmail(email) || phone.length !== 10) {
-            alert('Please fill in all fields correctly.');
+            Alert.alert('Required Register Details','Please fill in all fields correctly.');
             return;
         }
         console.log("Password: ",password)
         if (!isPasswordStrong(password)) {
-            alert('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
+            Alert.alert('Invalid Password Policy','Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
             return;
         }
 
         try {
             setLoading(true)
-            navigation.navigate(NavRoutes.OTP, { email, redirectAfter:'register' })
+
+             const {emailExists, phoneExists} = await checkCustomerExistRequester({email, phone});
+
+             if(emailExists){
+                 Alert.alert('Email has been exist','Email is already registered')
+                 return
+             } 
+             if(phoneExists) {
+                 Alert.alert('Phone has been exist','Phone is already registered')
+                 return
+             }
+             navigation.navigate(NavRoutes.OTP, { email, redirectAfter:'register' })
             await registerCustomerRequester({ name, email, password, phone })
         } catch (err: any) {
             console.log(err.res_code)
-            if (err.res_code === "0401") {
-                alert('Email is already registered')
-            } else if (err.res_code === "0402") {
-                alert('Phone is already registered')
-            }
-            else {
-                alert('Something went wrong.')
-            }
+            console.error(err)
         } finally {
             setLoading(false)
         }

@@ -7,7 +7,7 @@ import { saveAuthData } from "@/sources/utils/auth"
 import { LoginCustomerRequester, resendOtpRequester } from "@/sources/utils/requestUtils"
 import { useFocusEffect } from "@react-navigation/native"
 import { useCallback, useRef, useState } from "react"
-import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native"
+import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View, Alert } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useDispatch } from "react-redux"
 import { isEmail } from 'validator'
@@ -21,7 +21,7 @@ const Login = ({ navigation }: any) => {
 
     const handleLogin = async () => {
         if (!isEmail(email) || password.length < 6) {
-            alert("Enter valid email and password (min 6 characters)");
+            Alert.alert('Email or Password Invalid',"Enter valid email and password");
             return;
         }
 
@@ -35,25 +35,25 @@ const Login = ({ navigation }: any) => {
         } catch (err: any) {
             console.log(err)
             if (err.res_code === '0404') {
-                alert('Email or Password Invalid')
+                Alert.alert('Email or Password Invalid',"Enter valid email and password")
             }
             if (err.res_code === '0410') {
                 try {
                     navigation.navigate(NavRoutes.OTP, { email, password, redirectAfter: "login" });
-                    alert('Account not verified. Please verify your email before logging in.')
+                    Alert.alert('Account not verified', 'Please verify your email before logging in.')
                     await resendOtpRequester({ email });
-                } catch (err:any) {
-                    if(err.res_code === "0499"){
-                        alert(err.message)
+                } catch (err: any) {
+                    if (err.res_code === "0499") {
+                        Alert.alert('Too many OTP attempts', err.message)
                         return
                     }
-                    alert("Failed to resend OTP. Please try again later.");
+                    Alert.alert("Failed to resend OTP.","Failed to resend OTP. Please try again later.");
                     console.error(err);
                 }
             }
 
-            if(err.res_code === '0488') {
-                alert(err.message)
+            if (err.res_code === '0488') {
+                Alert.alert("Too many login attempts",err.message)
             }
         }
     };
@@ -121,33 +121,46 @@ const Login = ({ navigation }: any) => {
                                         returnKeyType="done"
                                         onSubmitEditing={handleLogin}
                                     />
+
+                                    <RNText
+                                        size={FontSize.font14}
+                                        family={FontFamily.Medium}
+                                        color={Colors.Brown}
+                                        align="right"
+                                        pHorizontal={wp(5)}
+                                        onPress={() => navigation.navigate(NavRoutes.FORGOT_PASSWORD)}
+                                        style={{ textDecorationLine: "underline", marginTop: hp(0.5) }}
+                                    >
+                                        Forgot Password?
+                                    </RNText>
                                 </View>
 
+                                <RNButton
+                                    title="Login"
+                                    style={{marginTop: hp(0.5)}}
+                                    onPress={handleLogin}
+                                />
+
+                            </View>
+                            <RNText
+                                size={FontSize.font14}
+                                family={FontFamily.Bold}
+                                color={Colors.Brown}
+                                style={{ bottom: isIOS ? hp(3) : hp(5) }}
+                                align="center"
+                                pHorizontal={wp(3)}
+                            >
+                                Don’t have an account?{" "}
                                 <RNText
                                     size={FontSize.font14}
                                     family={FontFamily.Bold}
                                     color={Colors.Brown}
-                                    align="center"
-                                    pHorizontal={wp(3)}
+                                    style={{ textDecorationLine: "underline" }}
+                                    onPress={() => navigation.navigate(NavRoutes.REGISTER)}
                                 >
-                                    Don’t have an account?{" "}
-                                    <RNText
-                                        size={FontSize.font14}
-                                        family={FontFamily.Bold}
-                                        color={Colors.Brown}
-                                        style={{ textDecorationLine: "underline" }}
-                                        onPress={() => navigation.navigate(NavRoutes.REGISTER)}
-                                    >
-                                        Register
-                                    </RNText>
+                                    Register
                                 </RNText>
-                            </View>
-
-                            <RNButton
-                                title="Next"
-                                style={{ bottom: isIOS ? hp(3) : hp(5) }}
-                                onPress={handleLogin}
-                            />
+                            </RNText>
                         </View>
                     </TouchableWithoutFeedback>
                 </KeyboardAvoidingView>
