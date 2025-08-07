@@ -97,7 +97,7 @@ const OTP = ({ navigation, route }: any) => {
                  Alert.alert('Too many OTP attempts', err.message)
                 return
             }
-            if(err.res_code === '0413') {
+            if(err.res_code === '0412') {
                 Alert.alert('Too many OTP attempts', 'Please wait a moment before requesting a new OTP.')
                 return
             }

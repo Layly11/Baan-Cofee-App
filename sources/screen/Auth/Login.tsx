@@ -33,7 +33,7 @@ const Login = ({ navigation }: any) => {
             dispatch(setAsyncStorageValue({ user: res.data.customer }));
 
         } catch (err: any) {
-            console.log(err)
+            console.log(err.res_code)
             if (err.res_code === '0404') {
                 Alert.alert('Email or Password Invalid',"Enter valid email and password")
             }
