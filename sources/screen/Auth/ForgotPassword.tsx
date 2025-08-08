@@ -40,7 +40,7 @@ const ForgotPassword = ({ navigation }: any) => {
             Alert.alert("Success", "A OTP has been sent to your email.");
         } catch (err: any) {
             console.log(err.res_code);
-            if(err.res_code === '0477') {
+            if(err.res_code === '0466') {
                 Alert.alert('To Many Password Reset',err.message)
                  navigation.goBack()
             }

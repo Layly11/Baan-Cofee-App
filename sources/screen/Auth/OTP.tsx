@@ -6,7 +6,8 @@ import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/Aut
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { saveAuthData } from "@/sources/utils/auth";
 import { LoginCustomerRequester, resendOtpRequester, resendResetOtpRequester, verifyOtpRequester, verifyResetOtpRequester } from "@/sources/utils/requestUtils";
-import { useRef, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useRef, useState } from "react";
 import { Alert, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native"
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,6 +20,16 @@ const OTP = ({ navigation, route }: any) => {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const otpRefs = useRef([]) as any;
 
+
+       useFocusEffect(
+            useCallback(() => {
+                setOtp(["", "", "", "", "", ""]);
+                otpRefs.current[0]?.focus();
+                return () => {
+                };
+            }, [])
+        );
+    
 
     const handleNext = async () => {
         if (otp.join("").length !== 6) {
@@ -41,7 +52,7 @@ const OTP = ({ navigation, route }: any) => {
             }
         } catch (err: any) {
             console.log(err.message)
-            if (err.res_code === '0499') {
+            if (err.res_code === '0498') {
                 Alert.alert('Too many OTP attempts', err.message)
                 return
             }
@@ -58,9 +69,14 @@ const OTP = ({ navigation, route }: any) => {
         try {
             const joinedOtp = otp.join("");
             await verifyResetOtpRequester({ email, otp: joinedOtp })
-            navigation.navigate(NavRoutes.LOGIN);
-        } catch (err) {
-            console.log(err)
+            navigation.navigate(NavRoutes.NEW_PASSWORD);
+        } catch (err:any) {
+            console.log(err.res_code)
+             if(err.res_code === '0466') {
+                Alert.alert('To Many Password Reset',err.message)
+                navigation.goBack()
+            }
+            Alert.alert('OTP Invalid', 'Please try again')
         }
     }
 
@@ -98,7 +114,7 @@ const OTP = ({ navigation, route }: any) => {
                 return
             }
             if(err.res_code === '0412') {
-                Alert.alert('Too many OTP attempts', 'Please wait a moment before requesting a new OTP.')
+                Alert.alert('Please wait a moment', 'Please wait a moment before requesting a new OTP.')
                 return
             }
             Alert.alert("Failed to resend OTP", "Please try again.");

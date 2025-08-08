@@ -6,6 +6,7 @@ import Login from '../screen/Auth/Login';
 import Register from '../screen/Auth/Register';
 import OTP from '../screen/Auth/OTP';
 import ForgotPassword from '../screen/Auth/ForgotPassword';
+import NewPassword from '../screen/Auth/NewPassword';
 
 const Stack = createStackNavigator()
 
@@ -17,6 +18,7 @@ const AuthRoute = () => {
               <Stack.Screen name={NavRoutes.REGISTER} component={Register} />
               <Stack.Screen name={NavRoutes.OTP} component={OTP} />
               <Stack.Screen name={NavRoutes.FORGOT_PASSWORD} component={ForgotPassword} />
+              <Stack.Screen name={NavRoutes.NEW_PASSWORD} component={NewPassword} />
         </Stack.Navigator>
     )
 }

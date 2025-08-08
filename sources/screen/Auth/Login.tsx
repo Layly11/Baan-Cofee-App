@@ -47,7 +47,7 @@ const Login = ({ navigation }: any) => {
                         Alert.alert('Too many OTP attempts', err.message)
                         return
                     }
-                    Alert.alert("Failed to resend OTP.","Failed to resend OTP. Please try again later.");
+                    // Alert.alert("Failed to resend OTP.","Failed to resend OTP. Please try again later.");
                     console.error(err);
                 }
             }

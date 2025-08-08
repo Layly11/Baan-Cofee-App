@@ -4,6 +4,7 @@ const NavRoutes = {
   REGISTER: 'Register',
   OTP: 'Otp',
   FORGOT_PASSWORD: 'ForgotPassword',
+  NEW_PASSWORD: 'NewPassword',
   HOME: 'Home',
   MENU: 'Menu',
   CART: 'Cart',
