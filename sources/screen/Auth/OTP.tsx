@@ -69,7 +69,7 @@ const OTP = ({ navigation, route }: any) => {
         try {
             const joinedOtp = otp.join("");
             await verifyResetOtpRequester({ email, otp: joinedOtp })
-            navigation.navigate(NavRoutes.NEW_PASSWORD);
+            navigation.navigate(NavRoutes.NEW_PASSWORD, {email});
         } catch (err:any) {
             console.log(err.res_code)
              if(err.res_code === '0466') {

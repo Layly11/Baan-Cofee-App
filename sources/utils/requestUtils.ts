@@ -207,6 +207,32 @@ export const verifyResetOtpRequester = async ({ email, otp }: any) => {
     }
 }
 
+export const resetPasswordRequester = async ({ email, newPassword }: any) => {
+    try {
+        const res = await fetch(`http://${SERVER_API}/customer/reset-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, newPassword })
+        })
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+
 
 
 export const fetchCategoryRequester = async () => {
@@ -265,3 +291,5 @@ export const fetchProductDataRequester = async () => {
         throw error;
     }
 }
+
+

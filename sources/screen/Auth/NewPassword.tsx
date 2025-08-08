@@ -18,6 +18,8 @@ import { RNButton, RNInput, RNStyles, RNText } from "@/sources/common";
 import { Colors, FontFamily, FontSize, hp, isIOS, wp } from "@/sources/theme";
 import { Images } from "@/sources/constants";
 import SVG from "@/sources/constants/Svg";
+import { resetPasswordRequester } from "@/sources/utils/requestUtils";
+import { NavRoutes } from "@/sources/navigation";
 // import { resetPasswordRequester } from "@/sources/utils/requestUtils"; // <-- สร้างฟังก์ชันนี้ใน utils
 
 type ResetParams =
@@ -28,7 +30,7 @@ const NewPassword = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   // รองรับทั้งกรณีส่ง token หรือ email/otp มาทาง route
-  const { token, email, otp } = (route?.params || {}) as ResetParams & { otp?: string };
+  const {  email } = route.params
 
   const newPassRef = useRef<TextInput>(null);
   const confirmRef = useRef<TextInput>(null);
@@ -40,7 +42,6 @@ const NewPassword = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
 
   const isPasswordStrong = (password: string): boolean => {
-    // อย่างเดียวกับหน้า Register ของคุณ
     const policy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\W_]{8,}$/;
     return policy.test(password);
   };
@@ -65,25 +66,20 @@ const NewPassword = ({ navigation }: any) => {
   }, [newPassword, confirmPassword, loading]);
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (!canSubmit) {
+        Alert.alert('Invalid Password', 'Please fill in all fields correctly. ')
+        return
+    }
 
     try {
       setLoading(true);
-
-      // คุณเลือก logic ได้ตาม backend:
-      // 1) ถ้ามาจากลิงก์ reset ให้ใช้ token
-      // 2) หรือถ้ามาจาก flow OTP/verify ใช้ email(+otp) ก็ได้
-    //   await resetPasswordRequester({
-    //     newPassword,
-    //     token, // อาจเป็น undefined ถ้าใช้ email/otp
-    //     email, // อาจเป็น undefined ถ้าใช้ token
-    //     otp,   // กรณีต้องการด้วย
-    //   });
-
+      await resetPasswordRequester({email, newPassword})
       Alert.alert("Success", "Password has been reset.");
-      navigation.goBack();
+      navigation.navigate(NavRoutes.LOGIN);
     } catch (err: any) {
       // แสดงข้อความจาก backend ถ้ามี
+
+      console.log(err.res_code)
       const msg =
         err?.response?.data?.res_desc ||
         err?.res_desc ||
