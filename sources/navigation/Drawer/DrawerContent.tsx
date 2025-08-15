@@ -1,31 +1,30 @@
 import { RNButton, RNImage, RNStyles, RNText } from "@/sources/common";
-import SVG from "@/sources/constants/Svg";
-import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme";
-import { Pressable, StyleSheet, View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import NavRoutes from "../NavRoutes";
-import { ScrollView } from "react-native-gesture-handler";
-import { useState } from "react";
 import ConfirmModal from "@/sources/component/ConfirmModal";
-import { clearAuthData } from "@/sources/utils/auth";
-import { useDispatch } from "react-redux";
+import SVG from "@/sources/constants/Svg";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
+import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme";
+import { clearAuthData } from "@/sources/utils/auth";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import NavRoutes from "../NavRoutes";
 
 const DrawerContent = ({ navigation }: any) => {
     const insets = useSafeAreaInsets();
     const [modalVisible, setModalVisible] = useState(false);
+    // const [profile, setProfile] = useState({}) as any
     const dispatch = useDispatch();
+    const customer = useSelector((state: any) => state.Auth.AsyncValue.user)
     const handleNavigate = (route: any, params = {}) => {
         navigation.navigate(route, params);
         navigation.closeDrawer();
-    };
+    }
 
-    const profile = {
-        name: "John Robert",
-        phone: "+111 854 8745",
-        profile_img: "https://randomuser.me/api/portraits/men/32.jpg",
-        email: "john@gmail.com",
-    };
+    useEffect(() => {
+        console.log("Customer: ",customer)
+    }, [customer])
     return (
         <View
             style={[
@@ -49,17 +48,23 @@ const DrawerContent = ({ navigation }: any) => {
                     My Profile
                 </RNText>
                 <SVG.EDIT
-                    onPress={() => navigation.navigate(NavRoutes.EDIT_PROFILE, { profile })}
+                    onPress={() => navigation.navigate(NavRoutes.EDIT_PROFILE, { profile: customer })}
                 />
             </View>
 
             <View style={styles.profileContainer}>
-                <RNImage source={{ uri: profile.profile_img }} style={styles.avatar} />
+                {customer?.profile_img ? (
+                    <RNImage source={{ uri: customer.profile_img }} style={styles.avatar} />
+                )
+                    : (
+                        <SVG.PROFILE width={wp(20)} height={wp(20)} style={styles.avatar} />
+                    )
+                }
                 <RNText
                     size={FontSize.font20}
                     family={FontFamily.Bold}
-                >{profile.name}</RNText>
-                <RNText family={FontFamily.SemiBold} >{profile.phone}</RNText>
+                >{customer?.name}</RNText>
+                <RNText family={FontFamily.SemiBold} >{customer?.phone}</RNText>
             </View>
 
             <ScrollView>
@@ -113,9 +118,10 @@ const DrawerContent = ({ navigation }: any) => {
             <ConfirmModal
                 visible={modalVisible}
                 onConfirm={() => {
-                   dispatch(onAuthChange(false))
-                   dispatch(setAsyncStorageValue({}));
-                   clearAuthData()
+                    setModalVisible(false);
+                    dispatch(onAuthChange(false))
+                    dispatch(setAsyncStorageValue({}));
+                    clearAuthData()
                 }}
                 onCancel={() => setModalVisible(false)}
             />

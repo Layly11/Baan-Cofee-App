@@ -28,7 +28,7 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
     }
 }
 
-export const checkCustomerExistRequester = async ({email,phone}:any) => {
+export const checkCustomerExistRequester = async ({ email, phone }: any) => {
     try {
         const res = await fetch(`http://${SERVER_API}/customer/check-customer?email=${email}&phone=${phone}`, {
             method: "GET",
@@ -44,8 +44,6 @@ export const checkCustomerExistRequester = async ({email,phone}:any) => {
             err.res_code = data.res_code;
             throw err;
         }
-
-        console.log('Data: ', data.data)
 
         return data.data
 
@@ -116,7 +114,6 @@ export const LoginCustomerRequester = async ({ email, password }: any) => {
 
         const data = await res.json();
 
-        console.log("Data: ", data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
@@ -130,6 +127,27 @@ export const LoginCustomerRequester = async ({ email, password }: any) => {
     }
 }
 
+
+export const fetchProfileRequester = async () => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/customer/profile`, {
+            method: 'GET'
+        });
+        const data = await res.json();
+
+        console.log("Fetch Customer: ", data)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
 export const forgotPasswordRequester = async ({ email }: any) => {
     try {
         const res = await fetch(`http://${SERVER_API}/customer/forgot-password`, {
@@ -142,7 +160,6 @@ export const forgotPasswordRequester = async ({ email }: any) => {
 
         const data = await res.json();
 
-        console.log("Data: ", data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
@@ -169,7 +186,6 @@ export const resendResetOtpRequester = async ({ email }: any) => {
 
         const data = await res.json();
 
-        console.log("Data: ", data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
@@ -293,3 +309,64 @@ export const fetchProductDataRequester = async () => {
 }
 
 
+export const uploadProfileImageRequester = async (params: { userId: number; uri: string }) => {
+    const { userId, uri } = params;
+    try {
+        const ext = uri.split('.').pop()?.toLowerCase();
+        const mime = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/*';
+
+        const form = new FormData();
+        form.append('userId', String(userId));
+        form.append('profile_img', {
+            uri,
+            type: mime,
+            name: `profile_${userId}.${ext || 'jpg'}`
+        } as any)
+
+        const res = await fetch(`http://${SERVER_API}/profile/upload-image`, {
+            method: "POST",
+            body: form,
+        })
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`Upload failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+
+export const updateProfileRequester = async (payload: any) => {
+    try {
+
+        console.log("payload: ",payload)
+        const res = await fetch(`http://${SERVER_API}/profile/edit`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`Upload failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+
+}

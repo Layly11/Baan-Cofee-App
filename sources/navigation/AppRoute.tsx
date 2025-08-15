@@ -3,6 +3,7 @@ import NavConfigs from "./NavConfigs";
 import NavRoutes from "./NavRoutes";
 import Home from "../screen/Main/Home";
 import DrawerNavigator from "./Drawer";
+import EditProfile from "../screen/Main/EditProfile";
 
 const Stack = createStackNavigator();
 const AppRoute = () => {
@@ -13,6 +14,7 @@ const AppRoute = () => {
             component={DrawerNavigator}
             options={{headerShown: false}}
             />
+            <Stack.Screen name={NavRoutes.EDIT_PROFILE} component={EditProfile} />
         </Stack.Navigator>
     )
 }

@@ -30,7 +30,6 @@ const Login = ({ navigation }: any) => {
             const res = await LoginCustomerRequester({ email, password })
             await saveAuthData(res.data.token)
             dispatch(onAuthChange(true))
-            dispatch(setAsyncStorageValue({ user: res.data.customer }));
 
         } catch (err: any) {
             console.log(err.res_code)

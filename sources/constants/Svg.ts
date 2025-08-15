@@ -18,6 +18,7 @@ import Search from "../assets/Svg/Search.svg";
 import Bread from "../assets/Svg/Bread.svg"
 import Edit from "../assets/Svg/Edit.svg";
 import Right from "../assets/Svg/Right.svg";
+import Profile from "../assets/Svg/profile.svg";
 
 const SVG = {
     ADD: Add,
@@ -40,6 +41,7 @@ const SVG = {
     BREAD: Bread,
     EDIT: Edit,
     RIGHT: Right,
+    PROFILE: Profile,
 }
 
 export default SVG;

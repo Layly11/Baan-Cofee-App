@@ -11,6 +11,7 @@ import { ImageBackground } from "react-native";
 import { clearAuthData, getAuthToken } from "../utils/auth";
 import AppRoute from "./AppRoute";
 import {isTokenExpired} from '../utils/jwt'
+import { fetchProfileRequester } from "../utils/requestUtils";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,8 @@ const Routes = () => {
         const checkAuth = async () => {
             const token = await getAuthToken()
             if(token && !isTokenExpired(token)) {
+                const res = await fetchProfileRequester()
+                dispatch(setAsyncStorageValue({ user: res.customer }));
                 dispatch(onAuthChange(true))
                 setIsAuthenticated(true)
             } else{
@@ -35,7 +38,7 @@ const Routes = () => {
             }
         }
         checkAuth()
-    }, [dispatch])
+    }, [dispatch, isAuth])
 
     if (isAuthenticated === null) {
         return (

@@ -8,6 +8,8 @@ const Colors = {
   SpanishWhite: '#F7F4EF',
   Beige: '#E8DACD',
   Placeholder: '#9A9A9A',
+  Red: 'red',
+  
 };
 
 export default Colors;
