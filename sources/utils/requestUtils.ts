@@ -135,7 +135,6 @@ export const fetchProfileRequester = async () => {
         });
         const data = await res.json();
 
-        console.log("Fetch Customer: ", data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
@@ -346,7 +345,6 @@ export const uploadProfileImageRequester = async (params: { userId: number; uri:
 export const updateProfileRequester = async (payload: any) => {
     try {
 
-        console.log("payload: ",payload)
         const res = await fetch(`http://${SERVER_API}/profile/edit`, {
             method: "PATCH",
             headers: {
@@ -358,7 +356,7 @@ export const updateProfileRequester = async (payload: any) => {
 
          if (!res.ok) {
             const text = await res.text().catch(() => '');
-            throw new Error(`Upload failed (${res.status}): ${text}`);
+            throw new Error(`Update failed (${res.status}): ${text}`);
         }
 
         const data = await res.json()
@@ -370,3 +368,109 @@ export const updateProfileRequester = async (payload: any) => {
     }
 
 }
+
+export const deleteProfileRequester = async () => {
+    try {
+
+        const res = await authFetch(`http://${SERVER_API}/profile/delete`, {
+            method: "DELETE",
+        })
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`delete failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+
+}
+
+export const fetchAddressRequester = async () => {
+    try {
+
+        const res = await authFetch(`http://${SERVER_API}/profile/address`, {
+            method: "GET",
+        })
+
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+
+}
+
+export const createAddressRequester = async (payload: any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/profile/create/address`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const deleteAddressRequester = async (id: any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/profile/delete/address/${id}`, {
+            method: "DELETE",
+        })
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const updateAddressRequester = async (id:any, payload:any) => {
+     try {
+        const res = await authFetch(`http://${SERVER_API}/profile/edit/address/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        })
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+

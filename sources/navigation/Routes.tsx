@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { onAuthChange, setAsyncStorageValue } from "../redux/Reducers/AuthReducers";
-import { RNImage } from "../common";
 import { wp } from "../theme";
 import { NavigationContainer } from "@react-navigation/native";
 import NavConfigs from "./NavConfigs";
@@ -10,26 +9,34 @@ import AuthRoute from "./AuthRoute";
 import { ImageBackground } from "react-native";
 import { clearAuthData, getAuthToken } from "../utils/auth";
 import AppRoute from "./AppRoute";
-import {isTokenExpired} from '../utils/jwt'
+import { isTokenExpired } from '../utils/jwt'
 import { fetchProfileRequester } from "../utils/requestUtils";
 
 const Stack = createStackNavigator();
 
 
 const Routes = () => {
-    const { isAuth } = useSelector((state:any) => state.Auth);
+    const { isAuth } = useSelector((state: any) => state.Auth);
     const dispatch = useDispatch();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
     useEffect(() => {
         const checkAuth = async () => {
             const token = await getAuthToken()
-            if(token && !isTokenExpired(token)) {
-                const res = await fetchProfileRequester()
-                dispatch(setAsyncStorageValue({ user: res.customer }));
-                dispatch(onAuthChange(true))
-                setIsAuthenticated(true)
-            } else{
+            if (token && !isTokenExpired(token)) {
+                try {
+                    const res = await fetchProfileRequester()
+                    dispatch(setAsyncStorageValue({ user: res.customer }));
+                    dispatch(onAuthChange(true))
+                    setIsAuthenticated(true)
+                } catch (err) {
+                    console.log(err)
+                    dispatch(onAuthChange(false))
+                    dispatch(setAsyncStorageValue({}));
+                    setIsAuthenticated(false)
+                    clearAuthData()
+                }
+            } else {
                 dispatch(onAuthChange(false))
                 dispatch(setAsyncStorageValue({}));
                 setIsAuthenticated(false)

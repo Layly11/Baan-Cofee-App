@@ -19,6 +19,8 @@ import Bread from "../assets/Svg/Bread.svg"
 import Edit from "../assets/Svg/Edit.svg";
 import Right from "../assets/Svg/Right.svg";
 import Profile from "../assets/Svg/profile.svg";
+import Close from "../assets/Svg/Close.svg";
+import Location from "../assets/Svg/Location.svg";
 
 const SVG = {
     ADD: Add,
@@ -26,6 +28,7 @@ const SVG = {
     MENU: Menu,
     CART: Cart,
     CART_CURVE: CartCurve,
+    CLOSE: Close,
     HOME_CURVE: HomeCurve,
     MENU_CURVE: MenuCurve,
     DRAWER: Drawer,
@@ -42,6 +45,7 @@ const SVG = {
     EDIT: Edit,
     RIGHT: Right,
     PROFILE: Profile,
+    LOCATION: Location,
 }
 
 export default SVG;

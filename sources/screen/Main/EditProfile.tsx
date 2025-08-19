@@ -6,10 +6,10 @@ import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/Aut
 import { Colors, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { clearAuthData } from "@/sources/utils/auth";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
-import { updateProfileRequester, uploadProfileImageRequester } from '@/sources/utils/requestUtils';
+import { deleteProfileRequester, updateProfileRequester, uploadProfileImageRequester } from '@/sources/utils/requestUtils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9]{10}$/;
@@ -30,23 +30,18 @@ const EditProfile = ({ navigation, route }: any) => {
         profile_img: profile.profile_img || ""
     });
 
-    useEffect(() => {
-        console.log("Uri: ", pickedImageUri)
-    }, [pickedImageUri])
+    const errors = useMemo(() => {
+        const e: Record<string, string> = {};
+        if (!userData.name.trim()) e.name = "Name is required";
+        if (!emailRegex.test(userData.email.trim())) e.email = "Invalid email";
+        if (!phoneRegex.test(userData.phone.trim())) e.phone = "Phone must be 10 digits";
+        return e;
+    }, [userData]);
 
-
-     const errors = useMemo(() => {
-    const e: Record<string, string> = {};
-    if (!userData.name.trim()) e.name = "Name is required";
-    if (!emailRegex.test(userData.email.trim())) e.email = "Invalid email";
-    if (!phoneRegex.test(userData.phone.trim())) e.phone = "Phone must be 10 digits";
-    return e;
-  }, [userData]);
-
-  const canSave = useMemo(
-    () => !saving && !uploading && Object.keys(errors).length === 0,
-    [saving, uploading, errors]
-  );
+    const canSave = useMemo(
+        () => !saving && !uploading && Object.keys(errors).length === 0,
+        [saving, uploading, errors]
+    );
     const pickImage = async () => {
         // ขอ permission
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -78,11 +73,10 @@ const EditProfile = ({ navigation, route }: any) => {
                 setUploading(true);
 
                 const upRes = await uploadProfileImageRequester({ userId: userData.id, uri: pickedImageUri })
-                console.log("UpRes: ", upRes?.data?.imageUrl)
                 newUrl = upRes?.data?.imageUrl || '';
                 setUploading(false);
             }
-            
+
             const payload = {
                 id: userData.id,
                 name: userData.name.trim(),
@@ -90,7 +84,6 @@ const EditProfile = ({ navigation, route }: any) => {
                 phone: userData.phone.trim(),
             };
 
-            console.log("Payload: ", payload)
             const resp = await updateProfileRequester(payload);
 
             const updatedUser = resp?.user
@@ -110,7 +103,21 @@ const EditProfile = ({ navigation, route }: any) => {
     }
 
     const handelAlertSave = () => {
-        Alert.alert("Cannot Save Profile","Please make sure all fields are filled correctly before saving.")
+        Alert.alert("Cannot Save Profile", "Please make sure all fields are filled correctly before saving.")
+    }
+
+    const handleDeleteAccount = async () => {
+        setModalVisible(false);
+        try {
+
+            const res = await deleteProfileRequester()
+            console.log("res: ", res)
+            dispatch(onAuthChange(false))
+            dispatch(setAsyncStorageValue({}));
+            clearAuthData()
+        } catch (err) {
+             console.log(err);
+        }
     }
     return (
         <View style={{ flex: 1 }}>
@@ -144,7 +151,7 @@ const EditProfile = ({ navigation, route }: any) => {
                         style={{ fontSize: FontSize.font16 }}
                         placeholderTextColor={Colors.Placeholder}
                     />
-                     {errors.name ? <RNText color={Colors.Red}>{errors.name}</RNText> : null}
+                    {errors.name ? <RNText color={Colors.Red}>{errors.name}</RNText> : null}
 
                     <RNInput
                         value={userData.phone}
@@ -180,12 +187,7 @@ const EditProfile = ({ navigation, route }: any) => {
                     subTitle={"Are you sure you want to Delete your Account?"}
                     cancelText={"Cancel"}
                     confirmText={"Delete"}
-                    onConfirm={() => {
-                        setModalVisible(false);
-                        dispatch(onAuthChange(false))
-                        dispatch(setAsyncStorageValue({}));
-                        clearAuthData()
-                    }}
+                    onConfirm={handleDeleteAccount}
                     onCancel={() => setModalVisible(false)}
                 />
             </View>

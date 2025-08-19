@@ -109,7 +109,6 @@ const Menu = ({ navigation, route }: any) => {
     setIsLoading(true)
     try {
       const res = await fetchProductDataRequester()
-      console.log("ProductData: ", res.productData)
       setProductData(res.productData)
       setHasError(false)
     } catch (err) {

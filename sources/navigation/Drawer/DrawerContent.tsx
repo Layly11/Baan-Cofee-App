@@ -22,9 +22,6 @@ const DrawerContent = ({ navigation }: any) => {
         navigation.closeDrawer();
     }
 
-    useEffect(() => {
-        console.log("Customer: ",customer)
-    }, [customer])
     return (
         <View
             style={[

@@ -4,6 +4,8 @@ import { wp } from "@/sources/theme";
 import Index from "../BottomTabs";
 
 import DrawerContent from './DrawerContent'
+import NavRoutes from "../NavRoutes";
+import Address from "@/sources/screen/Main/Address";
 
 const Drawer = createDrawerNavigator()
 const DrawerNavigator = () => {
@@ -19,6 +21,7 @@ const DrawerNavigator = () => {
             drawerContent={(props) => <DrawerContent {...props}/>}
         >
             <Drawer.Screen name="BottomTabs" component={Index}/>
+            <Drawer.Screen name={NavRoutes.ADDRESS} component={Address} />
         </Drawer.Navigator>
     )
 }

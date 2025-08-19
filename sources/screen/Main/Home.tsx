@@ -43,7 +43,6 @@ const Home = ({ navigation }: any) => {
                 icon: getCategoryIcon(cat.name),
             }));
 
-            console.log(itemsWithIcons)
             setCategory(itemsWithIcons)
             setHasError(false)
         } catch (err) {
@@ -60,7 +59,6 @@ const Home = ({ navigation }: any) => {
         try {
             const res = await fetchBestSellerRequester()
             const bestSeller = res.bestSeller
-            console.log(`BestSeller:`, bestSeller)
             setBestSeller(bestSeller)
             setHasError(false)
         } catch (err) {

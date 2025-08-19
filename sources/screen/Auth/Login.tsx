@@ -1,7 +1,7 @@
 import { RNButton, RNInput, RNStyles, RNText } from "@/sources/common"
 import { Images } from "@/sources/constants"
 import { NavRoutes } from "@/sources/navigation"
-import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers"
+import { onAuthChange } from "@/sources/redux/Reducers/AuthReducers"
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme"
 import { saveAuthData } from "@/sources/utils/auth"
 import { LoginCustomerRequester, resendOtpRequester } from "@/sources/utils/requestUtils"

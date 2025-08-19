@@ -60,7 +60,6 @@ const Register = ({ navigation }: any) => {
             Alert.alert('Required Register Details','Please fill in all fields correctly.');
             return;
         }
-        console.log("Password: ",password)
         if (!isPasswordStrong(password)) {
             Alert.alert('Invalid Password Policy','Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
             return;
