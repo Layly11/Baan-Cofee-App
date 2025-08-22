@@ -34,7 +34,7 @@
       "expo-secure-store"
     ],
     "extra": {
-      "serverApi": "127.0.0.1:9302"
+      "serverApi": "192.168.101.76:9302"
     }
   }
 }

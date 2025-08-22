@@ -5,7 +5,7 @@ import SVG from "@/sources/constants/Svg";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import { Colors, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { clearAuthData } from "@/sources/utils/auth";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Alert, StyleSheet, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";

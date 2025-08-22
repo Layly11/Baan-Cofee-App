@@ -4,6 +4,7 @@ import NavRoutes from "./NavRoutes";
 import DrawerNavigator from "./Drawer";
 import EditProfile from "../screen/Main/EditProfile";
 import Address from "../screen/Main/Address";
+import Product from "../screen/Main/Product";
 
 const Stack = createStackNavigator();
 const AppRoute = () => {
@@ -16,6 +17,7 @@ const AppRoute = () => {
             />
             <Stack.Screen name={NavRoutes.EDIT_PROFILE} component={EditProfile} />
             <Stack.Screen name={NavRoutes.ADDRESS} component={Address} />
+            <Stack.Screen name={NavRoutes.PRODUCT} component={Product} />
         </Stack.Navigator>
     )
 }

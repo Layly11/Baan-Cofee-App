@@ -21,6 +21,10 @@ import Right from "../assets/Svg/Right.svg";
 import Profile from "../assets/Svg/profile.svg";
 import Close from "../assets/Svg/Close.svg";
 import Location from "../assets/Svg/Location.svg";
+import Decrement from "../assets/Svg/Decrement.svg";
+import Increment from "../assets/Svg/Increment.svg";
+import Size from "../assets/Svg/Size.svg";
+import FSize from "../assets/Svg/FSize.svg";
 
 const SVG = {
     ADD: Add,
@@ -46,6 +50,10 @@ const SVG = {
     RIGHT: Right,
     PROFILE: Profile,
     LOCATION: Location,
+    DECREMENT: Decrement,
+    INCREMENT: Increment,
+    SIZE: Size,
+    F_SIZE: FSize,
 }
 
 export default SVG;

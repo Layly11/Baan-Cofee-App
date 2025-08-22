@@ -308,6 +308,25 @@ export const fetchProductDataRequester = async () => {
 }
 
 
+export const fetchProductSizeRequester = async (id: any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/products/sizes/${id}`,{
+            method: "GET",
+        })
+        const data = await res.json()
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
 export const uploadProfileImageRequester = async (params: { userId: number; uri: string }) => {
     const { userId, uri } = params;
     try {

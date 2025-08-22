@@ -4,9 +4,9 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
-  FlatList,
   Dimensions,
   ActivityIndicator,
+  InteractionManager
 } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { RNHeader, RNImage, RNStyles, RNText } from "../../common";
@@ -24,7 +24,6 @@ import { NavRoutes } from "../../navigation";
 import { fetchCategoryRequester, fetchProductDataRequester } from "@/sources/utils/requestUtils";
 import { getCategoryIcon } from "@/sources/common/categoryIcon";
 import { useFocusEffect } from "@react-navigation/native";
-import { InteractionManager } from "react-native";
 
 const { width } = Dimensions.get("window");
 const HEADER_TOP_PADDING = isIOS ? hp(5) : hp(5);
