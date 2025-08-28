@@ -492,4 +492,84 @@ export const updateAddressRequester = async (id:any, payload:any) => {
     }
 }
 
+export const addToCartRequester = async (payload:any) => {
+     try {
+        const res = await authFetch(`http://${SERVER_API}/cart/`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+        const data = await res.json()
 
+         if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const fetchCartRequester = async () => {
+     try {
+        const res = await authFetch(`http://${SERVER_API}/cart/`, {
+            method: "GET",
+        })
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const deleteCartRequester = async (id: any) => {
+     try {
+        const res = await authFetch(`http://${SERVER_API}/cart/delete/${id}`, {
+            method: "DELETE",
+        })
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+
+export const updateQuantityRequester = async (payload:any) => {
+     try {
+        const res = await authFetch(`http://${SERVER_API}/cart/update/quantity`, {
+            method: "PATCH",
+            body: JSON.stringify(payload)
+        })
+        const data = await res.json()
+
+         if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

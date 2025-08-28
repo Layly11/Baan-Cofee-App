@@ -59,6 +59,7 @@ const Home = ({ navigation }: any) => {
         try {
             const res = await fetchBestSellerRequester()
             const bestSeller = res.bestSeller
+            console.log("BestSeller: ", bestSeller)
             setBestSeller(bestSeller)
             setHasError(false)
         } catch (err) {
@@ -118,7 +119,13 @@ const Home = ({ navigation }: any) => {
     const renderBestSeller = ({ item }: any) => (
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate(NavRoutes.PRODUCT)}
+            onPress={() => navigation.navigate(NavRoutes.PRODUCT, {product: {
+                id: item.product_id,
+                title: item.name,
+                price: item.price,
+                image: item.imageSource,
+                desc: item.Desc,
+            }})}
         >
             <View style={styles.imageContainer}>
                 <View style={styles.imageBackground} />

@@ -1,20 +1,56 @@
 import { RNButton, RNHeader, RNImage, RNStyles, RNText } from "@/sources/common";
 import { getFillSizeIcon, getSizeIcon } from "@/sources/common/categoryIcon";
 import SVG from "@/sources/constants/Svg";
+import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
-import { fetchProductSizeRequester } from "@/sources/utils/requestUtils";
+import { addToCartRequester, fetchProductSizeRequester } from "@/sources/utils/requestUtils";
 import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 const Product = ({ navigation, route }: any) => {
     const [quantity, setQuantity] = useState(1);
-    const [selectedSizeId, setSelectedSizeId] = useState(null);
+    const [selectedSize, setSelectedSize] = useState<any>(null);
     const { product } = route.params;
     const [sizeItems, setSizeItems] = useState([])
 
-    const handleIncrement = () => setQuantity((prev) => prev + 1);
+    const basePrice = parseFloat(product.price);
+
+    const handleIncrement = () => {
+        if(quantity < 10) {
+             setQuantity((prev) => prev + 1)
+        } else{
+            Alert.alert("Limit Full","Maximum quantity is 10");
+        }
+    };
     const handleDecrement = () => quantity > 1 && setQuantity((prev) => prev - 1);
+
+    const handleAddToCart = async () => {
+        try {
+            const payload = {
+                product_id: product.id,
+                size_id: selectedSize.id,
+                quantity: quantity,
+                extra_price: totalPrice
+            }
+
+            const res = await addToCartRequester(payload)
+            const cartItems = res.data.cart
+
+            navigation.navigate('Drawer', {
+                screen: 'BottomTabs',
+                params: {
+                    screen: NavRoutes.CART,
+                    params: { cartItems },
+                },
+            })
+        } catch (err:any) {
+            console.log(err.res_code)
+            if(err.res_code === '0407'){ 
+                Alert.alert("Limit Full","Maximum quantity is 10 Please Check your Product Quantity in your Cart");
+            }
+        }
+    }
 
     const fetchSizeProduct = async () => {
         try {
@@ -38,44 +74,14 @@ const Product = ({ navigation, route }: any) => {
         fetchSizeProduct()
     }, [])
 
-
-    const menuItems = [
-        {
-            id: 1,
-            title: "Short",
-            Quntity: "230 ml",
-            icon: <SVG.SIZE width={wp(8)} height={wp(8)} />,
-            FillIcon: <SVG.F_SIZE width={wp(8)} height={wp(8)} />,
-        },
-        {
-            id: 2,
-            title: "Tall",
-            Quntity: "354 ml",
-            icon: <SVG.SIZE width={wp(9)} height={wp(9)} />,
-            FillIcon: <SVG.F_SIZE width={wp(9)} height={wp(9)} />,
-        },
-        {
-            id: 3,
-            title: "Grade",
-            Quntity: "473 ml",
-            icon: <SVG.SIZE width={wp(10)} height={wp(10)} />,
-            FillIcon: <SVG.F_SIZE width={wp(10)} height={wp(10)} />,
-        },
-        {
-            id: 4,
-            title: "Venti",
-            Quntity: "591 ml",
-            icon: <SVG.SIZE width={wp(12)} height={wp(12)} />,
-            FillIcon: <SVG.F_SIZE width={wp(12)} height={wp(12)} />,
-        },
-    ];
+    const totalPrice = (Number(basePrice) + Number(selectedSize?.extra_price || 0)) * quantity;
 
     const renderMenuItem = ({ item }: any) => {
-        const isSelected = selectedSizeId === item.id;
+        const isSelected = selectedSize?.id === item.id;
         return (
             <View>
                 <TouchableOpacity
-                    onPress={() => setSelectedSizeId(item.id)}
+                    onPress={() => setSelectedSize(item)}
                     style={[
                         styles.menuItem,
                         { backgroundColor: isSelected ? Colors.DarkBrown : Colors.Beige },
@@ -93,6 +99,13 @@ const Product = ({ navigation, route }: any) => {
                         family={FontFamily.SemiBold}
                         color={Colors.Brown}
                     >{item.Quntity}</RNText>
+                    <RNText
+                        size={FontSize.font14}
+                        family={FontFamily.SemiBold}
+                        color={Colors.Brown}
+                    >
+                        +{item.extra_price} ฿
+                    </RNText>
                 </View>
             </View>
         );
@@ -126,12 +139,12 @@ const Product = ({ navigation, route }: any) => {
                                 size={FontSize.font22}
                                 family={FontFamily.Black}
                                 numOfLines={2}
-                                style={{ width: wp(65) }}
+                                style={{ width: wp(55) }}
                             >{product.title}</RNText>
                             <RNText
                                 size={FontSize.font22}
                                 family={FontFamily.Black}
-                            >{product.price}</RNText>
+                            >{totalPrice.toFixed(2)} Bath</RNText>
                         </View>
                         <RNText
                             size={FontSize.font15}
@@ -148,7 +161,7 @@ const Product = ({ navigation, route }: any) => {
                         <FlatList
                             data={sizeItems}
                             renderItem={renderMenuItem}
-                            keyExtractor={(item:any) => item.id.toString()}
+                            keyExtractor={(item: any) => item.id.toString()}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ gap: wp(5), alignItems: "center" }}
@@ -170,7 +183,9 @@ const Product = ({ navigation, route }: any) => {
                             </View>
                             <RNButton
                                 title={"Add to Cart"}
-                                style={{ width: wp(50), backgroundColor: Colors.DarkBrown }}
+                                style={{ width: wp(50), backgroundColor: selectedSize === null ? Colors.Placeholder : Colors.DarkBrown }}
+                                disable={selectedSize === null}
+                                onPress={handleAddToCart}
                             />
                         </View>
                     </View>
