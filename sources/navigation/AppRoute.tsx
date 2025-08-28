@@ -5,6 +5,7 @@ import DrawerNavigator from "./Drawer";
 import EditProfile from "../screen/Main/EditProfile";
 import Address from "../screen/Main/Address";
 import Product from "../screen/Main/Product";
+import Payment from "../screen/Main/Payment";
 
 const Stack = createStackNavigator();
 const AppRoute = () => {
@@ -18,6 +19,7 @@ const AppRoute = () => {
             <Stack.Screen name={NavRoutes.EDIT_PROFILE} component={EditProfile} />
             <Stack.Screen name={NavRoutes.ADDRESS} component={Address} />
             <Stack.Screen name={NavRoutes.PRODUCT} component={Product} />
+            <Stack.Screen name={NavRoutes.PAYMENT} component={Payment} />
         </Stack.Navigator>
     )
 }

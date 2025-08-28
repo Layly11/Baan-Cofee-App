@@ -15,6 +15,8 @@ import { RNButton, RNHeader, RNStyles, RNText } from "@/sources/common";
 import AddAddressModal from "@/sources/component/AddressModal";
 import { createAddressRequester, deleteAddressRequester, fetchAddressRequester, updateAddressRequester } from "@/sources/utils/requestUtils";
 import ConfirmModal from "@/sources/component/ConfirmModal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavRoutes } from "@/sources/navigation";
 
 // Address.tsx
 const Address = ({ navigation, route }: any) => {
@@ -26,18 +28,21 @@ const Address = ({ navigation, route }: any) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   // เก็บรายการที่แก้ไขได้จริง (แทนที่ const addressList เดิม)
   const [addresses, setAddresses] = useState([]) as any;
-
-
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const fetchAddress = async () => {
     try {
       const res = await fetchAddressRequester()
       setAddresses(res.data.address)
+      console.log(res.data.address)
+
+      const storeId = await AsyncStorage.getItem('selectedAddressId')
+      if(storeId) setSelectedAddressId(Number(storeId))
     } catch (err: any) {
       console.log(err)
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchAddress()
   }, [])
 
@@ -63,6 +68,12 @@ const Address = ({ navigation, route }: any) => {
       console.log("Res: ", res)
       if (res.res_code === '1111') {
         setAddresses((prev: any) => prev.filter((a: any) => a.id !== id));
+
+        if (selectedAddressId === id) {
+        setSelectedAddressId(null);
+        await AsyncStorage.removeItem('selectedAddressId');
+      }
+
         setSelectedId(null);
       } else {
         Alert.alert("Delete failed", "Something went wrong")
@@ -77,12 +88,12 @@ const Address = ({ navigation, route }: any) => {
     console.log("Data: ", data)
     try {
       if (editMode && editingData?.id) {
-         const res = await updateAddressRequester(editingData.id, data);
+        const res = await updateAddressRequester(editingData.id, data);
         setAddresses((prev: any) =>
-        prev.map((a: any) =>
-          a.id === editingData.id ? res.data.address : a
-        )
-      );
+          prev.map((a: any) =>
+            a.id === editingData.id ? res.data.address : a
+          )
+        );
       } else {
         const res = await createAddressRequester(data)
         setAddresses((prev: any) => [...prev, res.data.address]);
@@ -93,6 +104,11 @@ const Address = ({ navigation, route }: any) => {
     } catch (err) {
       console.log(err)
     }
+  };
+
+   const selectAddress = async (id: number) => {
+    setSelectedAddressId(id);
+    await AsyncStorage.setItem('selectedAddressId', id.toString());
   };
 
   return (
@@ -107,8 +123,15 @@ const Address = ({ navigation, route }: any) => {
         title={"My Addresses"}
       />
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {addresses.map((item: any, index: number) => (
-          <View key={item.id} style={styles.addressCard}>
+        {addresses.map((item: any) => (
+          <TouchableOpacity
+            key={item.id}
+            style={[
+              styles.addressCard,
+              selectedAddressId === item.id && { borderColor: Colors.DarkBrown, borderWidth: 2 },
+            ]}
+            onPress={() => selectAddress(item.id)}
+          >
             <View style={RNStyles.flexRowBetween}>
               <RNText size={FontSize.font18} family={FontFamily.Bold}>
                 {item.name || item.type}
@@ -129,12 +152,15 @@ const Address = ({ navigation, route }: any) => {
                 {`${item.house_no ? item.house_no + ', ' : ''}${item.village ? item.village + ', ' : ''}${item.street}${item.city ? ', ' + item.city : ''}`}
               </RNText>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
 
-        <View style={styles.deleteButton}>
-          <RNButton title={"Add New Address"} onPress={openAdd} />
-        </View>
+       
+            <View style={styles.deleteButton}>
+              <RNButton title={"Add New Address"} onPress={openAdd} />
+            </View>
+
+
 
         <AddAddressModal
           visible={isModalVisible}

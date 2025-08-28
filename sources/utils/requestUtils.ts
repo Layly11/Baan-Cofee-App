@@ -433,6 +433,29 @@ export const fetchAddressRequester = async () => {
 
 }
 
+export const fetchAddressBySelectedRequester = async (id :any) => {
+    try {
+
+        const res = await authFetch(`http://${SERVER_API}/profile/address/${id}`, {
+            method: "GET",
+        })
+
+
+         if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        }
+
+        const data = await res.json()
+        return data;
+
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+
+}
+
 export const createAddressRequester = async (payload: any) => {
     try {
         const res = await authFetch(`http://${SERVER_API}/profile/create/address`, {

@@ -10,7 +10,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { debounce } from "lodash";
 
 
-const OPTIONS = ["Dine-In", "Takeaway", "Delivery"];
+const BASE_SHIPPING_FEE = 10;
+const PER_ITEM_FEE = 5; 
+const TAX_RATE = 0.07;
+
 const Cart = ({ navigation, route }: any) => {
     const [selectedType, setSelectedType] = useState("Dine-In");
     const insets = useSafeAreaInsets();
@@ -94,17 +97,13 @@ const Cart = ({ navigation, route }: any) => {
         );
     };
     const getShippingFees = () => {
-        if(selectedType === 'Dine-In' || selectedType === 'Takeaway'){
-            return "0.00"
-        }else if (selectedType === 'Delivery'){
-            return "5.00"
-        }else {
-            return "0.00"
-        }
+        const totalItems = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
+        const fee = BASE_SHIPPING_FEE + PER_ITEM_FEE * totalItems;
+        return fee.toFixed(2);
     }
 
     const getTotal = () => {
-        return Number(getSubTotal()) + Number(getShippingFees())
+        return Number(getSubTotal()) + Number(getShippingFees()) + Number(getSubTotal() * TAX_RATE)
     }
 
     return (
@@ -119,39 +118,8 @@ const Cart = ({ navigation, route }: any) => {
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
                 >
-                    <View
-                        style={{
-                            ...RNStyles.flexRowCenter,
-                            gap: wp(3),
-                            paddingTop: hp(3),
-                            paddingHorizontal: wp(4),
-                        }}
-                    >
-                        {OPTIONS.map((option) => {
-                            const isSelected = selectedType === option;
-                            return (
-                                <TouchableOpacity
-                                    key={option}
-                                    onPress={() => setSelectedType(option)}
-                                    style={[
-                                        styles.typeButton,
-                                        {
-                                            backgroundColor: isSelected
-                                                ? Colors.DarkBrown
-                                                : Colors.Beige,
-                                        },
-                                    ]}
-                                >
-                                    <RNText
-                                        color={isSelected ? Colors.White : Colors.DarkBrown}
-                                        family={FontFamily.SemiBold}
-                                    >{option}</RNText>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </View>
 
-                    <View style={{ gap: hp(1.5), paddingHorizontal: wp(4) }}>
+                    <View style={{ gap: hp(1.5), paddingHorizontal: wp(4),paddingTop: hp(3), }}>
                         {cartItems.map((item: any) => (
                             <View key={item.id} style={styles.addressCard}>
                                 <View style={styles.imageContainer}>
@@ -168,9 +136,7 @@ const Cart = ({ navigation, route }: any) => {
                                             family={FontFamily.Black}
                                             color={Colors.Brown}
                                         >{item.size}</RNText>
-                                        <TouchableOpacity onPress={() => handleDeleteCart(item.id)}>
-                                            <SVG.CLOSE />
-                                        </TouchableOpacity>
+                                            <SVG.CLOSE onPress={() => handleDeleteCart(item.id)}/>
                                     </View>
                                     <RNText
                                         size={FontSize.font18}
@@ -206,9 +172,10 @@ const Cart = ({ navigation, route }: any) => {
                     </View>
 
                     <CartSummary
-                        subtotal={`${getSubTotal().toFixed(2)}`}
-                        shipping={getShippingFees()}
-                        totalPayment={getTotal()}
+                        subtotal={getSubTotal().toFixed(2)}
+                        shipping={cartItems.length > 0  ? getShippingFees() :'0.00'}
+                        Taxes={Number(getSubTotal() * TAX_RATE).toFixed(2)}
+                        totalPayment={getTotal().toFixed(2)}
                     />
                     <RNButton
                         title={"Checkout"}
@@ -221,12 +188,13 @@ const Cart = ({ navigation, route }: any) => {
     )
 };
 
-const CartSummary = ({ subtotal, shipping, Taxes, Discount, totalPayment }: any) => {
+const CartSummary = ({ subtotal, shipping, Taxes, totalPayment }: any) => {
     return (
         <View style={styles.cartSummaryContainer}>
             <View style={{ gap: hp(1) }}>
                 <SummaryRow label="Subtotal" value={subtotal} />
                 <SummaryRow label="Shipping Fees" value={`${shipping}`} />
+                <SummaryRow label="Taxes (7%)" value={`${Taxes}`} />
             </View>
             <View style={styles.divider} />
             <SummaryRow label="Total" value={`${totalPayment}`} />
