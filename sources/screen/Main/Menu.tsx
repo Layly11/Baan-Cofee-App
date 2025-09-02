@@ -141,14 +141,14 @@ const Menu = ({ navigation, route }: any) => {
       return index >= 0 ? index : 2;
     }
     return 2;
-  }, [route?.params?.category]);
+  }, [route?.params?.category, categories]);
 
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
 
 
   useEffect(() => {
-    if (route?.params?.category) {
+    if (route?.params?.category  && categories.length > 0) {
       const index = categories.findIndex(
         (cat) => cat.label === route.params.category
       );
@@ -157,7 +157,7 @@ const Menu = ({ navigation, route }: any) => {
       }
       navigation.setParams({ category: undefined });
     }
-  }, [route?.params?.category]);
+  }, [route?.params?.category, categories]);
 
   const selectedCategory = categories[selectedIndex]?.label;
   const filteredDrinks = productData[selectedCategory] || [];
