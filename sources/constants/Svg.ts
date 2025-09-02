@@ -25,6 +25,7 @@ import Decrement from "../assets/Svg/Decrement.svg";
 import Increment from "../assets/Svg/Increment.svg";
 import Size from "../assets/Svg/Size.svg";
 import FSize from "../assets/Svg/FSize.svg";
+import Juice from "../assets/Svg/juice-svgrepo-com.svg";
 
 const SVG = {
     ADD: Add,
@@ -54,6 +55,7 @@ const SVG = {
     INCREMENT: Increment,
     SIZE: Size,
     F_SIZE: FSize,
+    JUICE: Juice
 }
 
 export default SVG;

@@ -16,6 +16,8 @@ const NavRoutes = {
   NOTIFICATION: 'Notification',
   TRACK_ORDER: 'TrackOrder',
   PAYMENT: 'Payment',
+  PAYMENT_WEB_VIEW: 'PaymentWebView',
+  PAYMENT_SUCCESS: 'PaymentSuccess',
   ADDCARD: 'AddCard',
   SEARCH: 'Search',
   PRODUCT: 'Product',

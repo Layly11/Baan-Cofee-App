@@ -18,15 +18,12 @@ import {
     View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useDispatch } from "react-redux";
 import SVG from "@/sources/constants/Svg";
 import { checkCustomerExistRequester, registerCustomerRequester } from "@/sources/utils/requestUtils";
-import { ALERT_TYPE, Dialog, AlertNotificationRoot } from 'react-native-alert-notification';
 import validator from 'validator'
 import { useFocusEffect } from "@react-navigation/native";
 
 const Register = ({ navigation }: any) => {
-    const dispatch = useDispatch();
     const insets = useSafeAreaInsets();
     const phoneRef = useRef<TextInput>(null);
     const passwordRef = useRef<TextInput>(null);

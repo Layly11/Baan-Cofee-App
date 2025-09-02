@@ -310,7 +310,7 @@ export const fetchProductDataRequester = async () => {
 
 export const fetchProductSizeRequester = async (id: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/products/sizes/${id}`,{
+        const res = await authFetch(`http://${SERVER_API}/products/sizes/${id}`, {
             method: "GET",
         })
         const data = await res.json()
@@ -373,7 +373,7 @@ export const updateProfileRequester = async (payload: any) => {
         })
 
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`Update failed (${res.status}): ${text}`);
         }
@@ -395,7 +395,7 @@ export const deleteProfileRequester = async () => {
             method: "DELETE",
         })
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`delete failed (${res.status}): ${text}`);
         }
@@ -418,7 +418,7 @@ export const fetchAddressRequester = async () => {
         })
 
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -433,7 +433,7 @@ export const fetchAddressRequester = async () => {
 
 }
 
-export const fetchAddressBySelectedRequester = async (id :any) => {
+export const fetchAddressBySelectedRequester = async (id: any) => {
     try {
 
         const res = await authFetch(`http://${SERVER_API}/profile/address/${id}`, {
@@ -441,7 +441,7 @@ export const fetchAddressBySelectedRequester = async (id :any) => {
         })
 
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -462,7 +462,7 @@ export const createAddressRequester = async (payload: any) => {
             method: "POST",
             body: JSON.stringify(payload)
         })
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -482,7 +482,7 @@ export const deleteAddressRequester = async (id: any) => {
             method: "DELETE",
         })
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -495,14 +495,14 @@ export const deleteAddressRequester = async (id: any) => {
     }
 }
 
-export const updateAddressRequester = async (id:any, payload:any) => {
-     try {
+export const updateAddressRequester = async (id: any, payload: any) => {
+    try {
         const res = await authFetch(`http://${SERVER_API}/profile/edit/address/${id}`, {
             method: "PUT",
             body: JSON.stringify(payload)
         })
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -515,15 +515,15 @@ export const updateAddressRequester = async (id:any, payload:any) => {
     }
 }
 
-export const addToCartRequester = async (payload:any) => {
-     try {
+export const addToCartRequester = async (payload: any) => {
+    try {
         const res = await authFetch(`http://${SERVER_API}/cart/`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
         const data = await res.json()
 
-         if (!res.ok) {
+        if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
             throw err;
@@ -537,12 +537,12 @@ export const addToCartRequester = async (payload:any) => {
 }
 
 export const fetchCartRequester = async () => {
-     try {
+    try {
         const res = await authFetch(`http://${SERVER_API}/cart/`, {
             method: "GET",
         })
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -557,12 +557,12 @@ export const fetchCartRequester = async () => {
 
 
 export const deleteCartRequester = async (id: any) => {
-     try {
+    try {
         const res = await authFetch(`http://${SERVER_API}/cart/delete/${id}`, {
             method: "DELETE",
         })
 
-         if (!res.ok) {
+        if (!res.ok) {
             const text = await res.text().catch(() => '');
             throw new Error(`fetch Address failed (${res.status}): ${text}`);
         }
@@ -576,21 +576,65 @@ export const deleteCartRequester = async (id: any) => {
 }
 
 
-export const updateQuantityRequester = async (payload:any) => {
-     try {
+export const updateQuantityRequester = async (payload: any) => {
+    try {
         const res = await authFetch(`http://${SERVER_API}/cart/update/quantity`, {
             method: "PATCH",
             body: JSON.stringify(payload)
         })
         const data = await res.json()
 
-         if (!res.ok) {
+        if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;
             throw err;
         }
 
         return data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const PaymentRequester = async (payload:any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/create/payment`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data.response;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const createOrderRequester = async () => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/create`, {
+            method: "POST",
+        })
+
+        const data = await res.json()
+
+        console.log("Payment Response: ", data.data.response)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data.response;
     } catch (error) {
         console.error(error)
         throw error;

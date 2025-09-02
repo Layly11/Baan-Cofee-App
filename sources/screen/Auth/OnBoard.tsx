@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Images from "../../constants/Images";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlatList, ImageSourcePropType, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from "react-native";

@@ -33,6 +33,7 @@
       "expo-font",
       "expo-secure-store"
     ],
+    "scheme": "baancoffee",
     "extra": {
       "serverApi": "127.0.0.1:9302"
     }

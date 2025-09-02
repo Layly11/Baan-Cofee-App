@@ -9,8 +9,9 @@ export const getCategoryIcon = (name: string) => {
             return SVG.COLD_COFFEE;
         case "drinks":
             return SVG.DRINKS;
-        case "bakery":
-            return SVG.SNACKS;
+        case "juice":
+            const JuiceIcon = (props: any) => <SVG.JUICE width={wp(10)} height={wp(10)} {...props} />;
+            return JuiceIcon;
         default:
             return SVG.HOT_COFFEE;
     }

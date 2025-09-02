@@ -3,23 +3,26 @@ import SVG from "@/sources/constants/Svg";
 import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { useCallback, useEffect, useState } from "react"
-import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchAddressBySelectedRequester, fetchAddressRequester } from "@/sources/utils/requestUtils";
+import { fetchAddressBySelectedRequester, fetchAddressRequester, PaymentRequester } from "@/sources/utils/requestUtils";
 import { useFocusEffect } from "@react-navigation/native";
 
 
 const fullPaymentOptions = [
-    { id: "credit_card", label: "Credit Card" },
+    { id: "credit", label: "Credit Card" },
     { id: "qr", label: "QR Payment" },
 
 ];
 const Payment = ({ navigation, route }: any) => {
-    const [selectedMethod, setSelectedMethod] = useState("credit_card")
+    const [selectedMethod, setSelectedMethod] = useState("credit")
     const insets = useSafeAreaInsets();
     const [selectedAddress, setSelectedAddress] = useState(route.params?.selectedAddress || null);
+    const [loading, setLoading] = useState(false);
+
+    const { amount, product } = route.params
 
 
     const fetchAddress = async () => {
@@ -29,16 +32,36 @@ const Payment = ({ navigation, route }: any) => {
                 const res = await fetchAddressBySelectedRequester(storeId)
                 setSelectedAddress(res.data.address)
             } else {
-                 setSelectedAddress(null)
+                setSelectedAddress(null)
             }
         } catch (err) {
             console.log(err)
         }
     }
 
+    const handlePayment = async () => {
+        if (!selectedAddress) {
+            Alert.alert("Address Required", "Please Select Your Address or Add New Address")
+            return
+        }
+
+        setLoading(true)
+
+        try {
+            const res = await PaymentRequester({amount, selectedMethod, product})
+
+            console.log("Redirect URL: ", res.redirect_url)
+
+            navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url })
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     useEffect(() => {
         fetchAddress()
-
     }, []);
 
     useFocusEffect(
@@ -50,6 +73,18 @@ const Payment = ({ navigation, route }: any) => {
         }, [])
     );
 
+
+        if (loading) {
+            return (
+                <View style={[styles.root, RNStyles.center]}>
+                    <ActivityIndicator size="large" color={Colors.Brown} />
+                    <RNText style={{ marginTop: 10, color: Colors.Brown }}>
+                        Loading...
+                    </RNText>
+                </View>
+            )
+        }
+
     return (
         <View style={{ flex: 1 }}>
             <RNHeader
@@ -57,8 +92,6 @@ const Payment = ({ navigation, route }: any) => {
                 LeftSvg={SVG.BACK}
                 title="Payment"
                 fontFamily={FontFamily.Bold}
-                RightText={"Add Card"}
-                onRightPress={() => navigation.navigate(NavRoutes.ADDCARD)}
             />
             <View style={[styles.container, { paddingBottom: insets.bottom }]}>
                 <ScrollView>
@@ -120,13 +153,7 @@ const Payment = ({ navigation, route }: any) => {
                 </ScrollView>
                 <RNButton
                     title={`Continue`}
-                    onPress={() => {
-
-                        if(!selectedAddress){
-                            Alert.alert("Address Required", "Please Select Your Address or Add New Address")
-                            return
-                        }
-                     }}
+                    onPress={handlePayment}
                     style={{ bottom: isIOS ? hp(0) : hp(2) }}
                 />
             </View>
@@ -138,6 +165,10 @@ const Payment = ({ navigation, route }: any) => {
 export default Payment;
 
 const styles = StyleSheet.create({
+     root: {
+        flex: 1,
+        backgroundColor: Colors.White,
+    },
     header: {
         backgroundColor: Colors.DarkBrown,
         paddingTop: isIOS ? hp(7) : hp(5),

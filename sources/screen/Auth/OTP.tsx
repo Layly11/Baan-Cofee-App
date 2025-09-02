@@ -9,7 +9,6 @@ import { LoginCustomerRequester, resendOtpRequester, resendResetOtpRequester, ve
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useRef, useState } from "react";
 import { Alert, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native"
-import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 

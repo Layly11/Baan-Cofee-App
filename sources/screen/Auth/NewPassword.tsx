@@ -20,11 +20,7 @@ import { Images } from "@/sources/constants";
 import SVG from "@/sources/constants/Svg";
 import { resetPasswordRequester } from "@/sources/utils/requestUtils";
 import { NavRoutes } from "@/sources/navigation";
-// import { resetPasswordRequester } from "@/sources/utils/requestUtils"; // <-- สร้างฟังก์ชันนี้ใน utils
 
-type ResetParams =
-  | { token: string; email?: never } // กรณีลิงก์ reset พร้อม token
-  | { email: string; token?: never; otp?: string }; // กรณีใช้ email(+otp) หลัง verify แล้ว
 
 const NewPassword = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();

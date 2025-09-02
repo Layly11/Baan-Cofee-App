@@ -4,7 +4,7 @@ import SVG from "@/sources/constants/Svg";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme";
 import { clearAuthData } from "@/sources/utils/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

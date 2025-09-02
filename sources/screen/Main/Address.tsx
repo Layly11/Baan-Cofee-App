@@ -16,7 +16,6 @@ import AddAddressModal from "@/sources/component/AddressModal";
 import { createAddressRequester, deleteAddressRequester, fetchAddressRequester, updateAddressRequester } from "@/sources/utils/requestUtils";
 import ConfirmModal from "@/sources/component/ConfirmModal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavRoutes } from "@/sources/navigation";
 
 // Address.tsx
 const Address = ({ navigation, route }: any) => {

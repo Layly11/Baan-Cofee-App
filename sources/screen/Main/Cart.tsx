@@ -3,19 +3,19 @@ import SVG from "@/sources/constants/Svg";
 import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { deleteCartRequester, fetchCartRequester, updateQuantityRequester } from "@/sources/utils/requestUtils";
-import { useEffect, useState } from "react";
-import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { debounce } from "lodash";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const BASE_SHIPPING_FEE = 10;
-const PER_ITEM_FEE = 5; 
+const PER_ITEM_FEE = 5;
 const TAX_RATE = 0.07;
 
 const Cart = ({ navigation, route }: any) => {
-    const [selectedType, setSelectedType] = useState("Dine-In");
     const insets = useSafeAreaInsets();
 
 
@@ -24,15 +24,23 @@ const Cart = ({ navigation, route }: any) => {
     const fetchCartItems = async () => {
         try {
             const res = await fetchCartRequester()
-            console.log("Cart: ", res.data.cart)
+            // console.log("Cart: ", res.data.cart)
             setCartItems(res.data.cart)
         } catch (err) {
             console.log(err)
         }
     }
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchCartItems()
+
+            return () => {
+            };
+        }, [])
+    );
+
     useEffect(() => {
-        console.log('Summary', getSubTotal())
         fetchCartItems()
     }, [])
 
@@ -69,6 +77,9 @@ const Cart = ({ navigation, route }: any) => {
     const handleDecrement = (id: any) => {
         setCartItems((prev: any) =>
             prev.map((item: any) => {
+                if (item.id === id && item.quantity === 1) {
+                    handleDeleteCart(item.id)
+                }
                 if (item.id === id && item.quantity > 1) {
                     const newQty = item.quantity - 1;
                     debouncedUpdateQuantity(id, newQty, (item.unit_price * newQty));
@@ -103,6 +114,7 @@ const Cart = ({ navigation, route }: any) => {
     }
 
     const getTotal = () => {
+        if (cartItems.length === 0) return 0;
         return Number(getSubTotal()) + Number(getShippingFees()) + Number(getSubTotal() * TAX_RATE)
     }
 
@@ -114,75 +126,97 @@ const Cart = ({ navigation, route }: any) => {
                 fontFamily={FontFamily.Bold}
             />
             <View style={[styles.root, { paddingBottom: insets.bottom }]}>
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
-                >
 
-                    <View style={{ gap: hp(1.5), paddingHorizontal: wp(4),paddingTop: hp(3), }}>
-                        {cartItems.map((item: any) => (
-                            <View key={item.id} style={styles.addressCard}>
-                                <View style={styles.imageContainer}>
-                                    <View style={styles.imageBackground} />
-                                    <RNImage
-                                        source={{ uri: item.imageSource }}
-                                        style={{ width: wp(27), height: wp(27) }}
-                                    />
-                                </View>
-                                <View style={{ width: wp(55), gap: hp(0.8) }}>
-                                    <View style={RNStyles.flexRowBetween}>
-                                        <RNText
-                                            size={FontSize.font14}
-                                            family={FontFamily.Black}
-                                            color={Colors.Brown}
-                                        >{item.size}</RNText>
-                                            <SVG.CLOSE onPress={() => handleDeleteCart(item.id)}/>
+                {cartItems.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <RNImage
+                            source={require("../../assets/Images/empty-cart.png")} // ใส่รูป empty cart ของคุณ
+                            style={{ width: wp(40), height: wp(40), marginBottom: hp(2) }}
+                            resizeMode="contain"
+                        />
+                        <RNText size={FontSize.font18} family={FontFamily.Bold} color={Colors.Brown}>
+                            Your cart is empty
+                        </RNText>
+                        <RNText size={FontSize.font14} color={Colors.Brown} style={{ marginTop: hp(1) }}>
+                            Looks like you have not added anything yet.
+                        </RNText>
+                        <RNButton
+                            title="Go Shopping"
+                            onPress={() => navigation.navigate(NavRoutes.HOME)} // เปลี่ยนไปหน้า shop ของคุณ
+                            style={{ marginTop: hp(3) }}
+                        />
+                    </View>
+                ) : (
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                    >
+
+                        <View style={{ gap: hp(1.5), paddingHorizontal: wp(4), paddingTop: hp(3), }}>
+                            {cartItems.map((item: any) => (
+                                <View key={item.id} style={styles.addressCard}>
+                                    <View style={styles.imageContainer}>
+                                        <View style={styles.imageBackground} />
+                                        <RNImage
+                                            source={{ uri: item.imageSource }}
+                                            style={{ width: wp(27), height: wp(27) }}
+                                        />
                                     </View>
-                                    <RNText
-                                        size={FontSize.font18}
-                                        family={FontFamily.Black}
-                                    >{item.name}</RNText>
-                                    <RNText
-                                        size={FontSize.font14}
-                                        color={Colors.Brown}
-                                    >{item.description}</RNText>
-                                    <View style={RNStyles.flexRowBetween}>
+                                    <View style={{ width: wp(55), gap: hp(0.8) }}>
+                                        <View style={RNStyles.flexRowBetween}>
+                                            <RNText
+                                                size={FontSize.font14}
+                                                family={FontFamily.Black}
+                                                color={Colors.Brown}
+                                            >{item.size}</RNText>
+                                            <SVG.CLOSE onPress={() => handleDeleteCart(item.id)} />
+                                        </View>
                                         <RNText
                                             size={FontSize.font18}
                                             family={FontFamily.Black}
-                                        >{item.extra_price}</RNText>
-                                        <View
-                                            style={{
-                                                ...RNStyles.flexRow,
-                                                gap: wp(2),
-                                                alignItems: "center",
-                                            }}
-                                        >
-                                            <SVG.DECREMENT onPress={() => handleDecrement(item.id)} />
+                                        >{item.name}</RNText>
+                                        <RNText
+                                            size={FontSize.font14}
+                                            color={Colors.Brown}
+                                        >{item.description}</RNText>
+                                        <View style={RNStyles.flexRowBetween}>
                                             <RNText
                                                 size={FontSize.font18}
                                                 family={FontFamily.Black}
-                                            >{item.quantity.toString()}</RNText>
-                                            <SVG.INCREMENT onPress={() => handleIncrement(item.id)} />
+                                            >{item.extra_price}</RNText>
+                                            <View
+                                                style={{
+                                                    ...RNStyles.flexRow,
+                                                    gap: wp(2),
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <SVG.DECREMENT onPress={() => handleDecrement(item.id)} />
+                                                <RNText
+                                                    size={FontSize.font18}
+                                                    family={FontFamily.Black}
+                                                >{item.quantity.toString()}</RNText>
+                                                <SVG.INCREMENT onPress={() => handleIncrement(item.id)} />
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
-                            </View>
-                        ))}
-                    </View>
+                            ))}
+                        </View>
 
-                    <CartSummary
-                        subtotal={getSubTotal().toFixed(2)}
-                        shipping={cartItems.length > 0  ? getShippingFees() :'0.00'}
-                        Taxes={Number(getSubTotal() * TAX_RATE).toFixed(2)}
-                        totalPayment={getTotal().toFixed(2)}
-                    />
-                    <RNButton
-                        title={"Checkout"}
-                        onPress={() => navigation.navigate(NavRoutes.PAYMENT)}
-                        style={{ marginVertical: hp(2) }}
-                    />
-                </ScrollView>
+                        <CartSummary
+                            subtotal={getSubTotal().toFixed(2)}
+                            shipping={cartItems.length > 0 ? getShippingFees() : '0.00'}
+                            Taxes={Number(getSubTotal() * TAX_RATE).toFixed(2)}
+                            totalPayment={getTotal().toFixed(2)}
+                        />
+                        <RNButton
+                            title={"Checkout"}
+                            onPress={() => navigation.navigate(NavRoutes.PAYMENT, { amount: getTotal().toFixed(2), product: cartItems.map((p: any) => ({ id: p.product_id, name: p.name, amount: p.quantity })) })}
+                            style={{ marginVertical: hp(2) }}
+                        />
+                    </ScrollView>
+                )}
             </View>
         </View>
     )
@@ -214,6 +248,13 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         backgroundColor: Colors.White,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: wp(5),
+        gap: hp(1.5),
     },
     header: {
         backgroundColor: Colors.DarkBrown,

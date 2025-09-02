@@ -1,7 +1,7 @@
 import { RNButton, RNInput, RNText } from "@/sources/common";
 import { Images } from "@/sources/constants";
 import { NavRoutes } from "@/sources/navigation";
-import { Colors, FontFamily, FontSize, hp, isIOS, wp } from "@/sources/theme";
+import { Colors, FontFamily, FontSize, hp, wp } from "@/sources/theme";
 // import { forgotPasswordRequester } from "@/sources/utils/requestUtils";
 import { isEmail } from "validator";
 import { useState } from "react";
