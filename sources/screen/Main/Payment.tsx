@@ -7,7 +7,7 @@ import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from "re
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchAddressBySelectedRequester, fetchAddressRequester, PaymentRequester } from "@/sources/utils/requestUtils";
+import { fetchAddressBySelectedRequester, PaymentRequester } from "@/sources/utils/requestUtils";
 import { useFocusEffect } from "@react-navigation/native";
 
 
@@ -50,10 +50,15 @@ const Payment = ({ navigation, route }: any) => {
         try {
             const res = await PaymentRequester({amount, selectedMethod, product})
 
-            console.log("Redirect URL: ", res.redirect_url)
-
-            navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url })
+            console.log("Redirect URL: ", res)
+            navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url, method: selectedMethod, bill_reference_1: res.bill_reference_1, amount})
         } catch (err) {
+            navigation.navigate('Drawer', {
+                        screen: 'BottomTabs',
+                        params: {
+                            screen: NavRoutes.HOME,
+                        },
+                    })
             console.log(err)
         } finally {
             setLoading(false)

@@ -542,12 +542,18 @@ export const fetchCartRequester = async () => {
             method: "GET",
         })
 
-        if (!res.ok) {
-            const text = await res.text().catch(() => '');
-            throw new Error(`fetch Address failed (${res.status}): ${text}`);
-        }
+        // if (!res.ok) {
+        //     const text = await res.text().catch(() => '');
+        //     throw new Error(`fetch Address failed (${res.status}): ${text}`);
+        // }
 
         const data = await res.json()
+         if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
         return data;
     } catch (error) {
         console.error(error)
@@ -635,6 +641,50 @@ export const createOrderRequester = async () => {
         }
 
         return data.data.response;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const fetchOrderRequester = async (reference:any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/payment/${reference}`, {
+            method: "GET"
+        })
+
+        const data = await res.json()
+
+        console.log("Payment Response: ", data.data.response)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}
+
+export const PayForQRRequester = async (payload:any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/payment/qr`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+
+        const data = await res.json()
+        console.log("Data: ", data)
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data;
     } catch (error) {
         console.error(error)
         throw error;

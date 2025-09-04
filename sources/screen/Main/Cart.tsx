@@ -127,27 +127,8 @@ const Cart = ({ navigation, route }: any) => {
             />
             <View style={[styles.root, { paddingBottom: insets.bottom }]}>
 
-                {cartItems.length === 0 ? (
-                    <View style={styles.emptyContainer}>
-                        <RNImage
-                            source={require("../../assets/Images/empty-cart.png")} // ใส่รูป empty cart ของคุณ
-                            style={{ width: wp(40), height: wp(40), marginBottom: hp(2) }}
-                            resizeMode="contain"
-                        />
-                        <RNText size={FontSize.font18} family={FontFamily.Bold} color={Colors.Brown}>
-                            Your cart is empty
-                        </RNText>
-                        <RNText size={FontSize.font14} color={Colors.Brown} style={{ marginTop: hp(1) }}>
-                            Looks like you have not added anything yet.
-                        </RNText>
-                        <RNButton
-                            title="Go Shopping"
-                            onPress={() => navigation.navigate(NavRoutes.HOME)} // เปลี่ยนไปหน้า shop ของคุณ
-                            style={{ marginTop: hp(3) }}
-                        />
-                    </View>
-                ) : (
-                    <ScrollView
+                {cartItems.length > 0 ? (
+                     <ScrollView
                         contentContainerStyle={styles.scrollContent}
                         showsVerticalScrollIndicator={false}
                     >
@@ -157,10 +138,12 @@ const Cart = ({ navigation, route }: any) => {
                                 <View key={item.id} style={styles.addressCard}>
                                     <View style={styles.imageContainer}>
                                         <View style={styles.imageBackground} />
-                                        <RNImage
+                                        {item.imageSource  && (
+                                            <RNImage
                                             source={{ uri: item.imageSource }}
                                             style={{ width: wp(27), height: wp(27) }}
                                         />
+                                        )}
                                     </View>
                                     <View style={{ width: wp(55), gap: hp(0.8) }}>
                                         <View style={RNStyles.flexRowBetween}>
@@ -216,6 +199,25 @@ const Cart = ({ navigation, route }: any) => {
                             style={{ marginVertical: hp(2) }}
                         />
                     </ScrollView>
+                ) : (
+                 <View style={styles.emptyContainer}>
+                        <RNImage
+                            source={require("../../assets/Images/empty-cart.png")} 
+                            style={{ width: wp(40), height: wp(40), marginBottom: hp(2) }}
+                            resizeMode="contain"
+                        />
+                        <RNText size={FontSize.font18} family={FontFamily.Bold} color={Colors.Brown}>
+                            Your cart is empty
+                        </RNText>
+                        <RNText size={FontSize.font14} color={Colors.Brown} style={{ marginTop: hp(1) }}>
+                            Looks like you have not added anything yet.
+                        </RNText>
+                        <RNButton
+                            title="Go Shopping"
+                            onPress={() => navigation.navigate(NavRoutes.HOME)} // เปลี่ยนไปหน้า shop ของคุณ
+                            style={{ marginTop: hp(3) }}
+                        />
+                    </View>
                 )}
             </View>
         </View>

@@ -1,32 +1,61 @@
-import { RNButton, RNHeader, RNImage, RNStyles, RNText } from "@/sources/common";
+import { RNButton, RNHeader, RNImage, RNText } from "@/sources/common";
 import { Colors, FontFamily, FontSize, hp, wp, normalize, isIOS } from "@/sources/theme";
 import { NavRoutes } from "@/sources/navigation";
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchOrderRequester } from "@/sources/utils/requestUtils";
+import { useEffect, useState } from "react";
 
-const PaymentSuccess = ({ navigation, route }: any) => {
+const PaymentResult = ({ navigation, route }: any) => {
     const insets = useSafeAreaInsets();
-    // const { amount } = route.params; 
+    const { result, reference, amount } = route.params
+    const [payment, setPayment] = useState({}) as any
+    const fetchPaymentData = async () => {
+        try {
+            const res = await fetchOrderRequester(reference)
+            console.log("Res: ", res)
+            setPayment(res.payment)
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
+    useEffect(() => {
+        fetchPaymentData()
+    },[])
     return (
         <View style={styles.root}>
+            { result === true }
             <RNHeader
                 containerStyle={styles.header}
                 LeftText="Payment"
                 fontFamily={FontFamily.Bold}
             />
             <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-                <RNImage
+
+                { result === true ? ( 
+                    <RNImage
                     source={require("../../assets/Images/credit-card.png")} // รูป local asset
                     style={styles.successImage}
                     resizeMode="contain"
                 />
+            ) : (
+                 <RNImage
+                    source={require("../../assets/Images/credit-card-failed.png")} // รูป local asset
+                    style={styles.successImage}
+                    resizeMode="contain"
+                />
+                )}
+               
                 <RNText size={FontSize.font22} family={FontFamily.Black} color={Colors.Brown}>
-                    Payment Successful!
+                    {result === true ? 'Payment Successful!' : 'Payment Failed!'}
                 </RNText>
-                <RNText size={FontSize.font16} color={Colors.Brown} style={{ marginTop: hp(1) }}>
-                    You have paid ??
+                {result === true && (
+                       <RNText size={FontSize.font16} color={Colors.Brown} style={{ marginTop: hp(1) }}>
+                    You have paid {amount ? amount :payment?.amount} Bath
                 </RNText>
+                )}  
+            
                 <RNButton
                     title="Go to Home"
                     onPress={() => navigation.navigate('Drawer', {
@@ -37,18 +66,21 @@ const PaymentSuccess = ({ navigation, route }: any) => {
                     })}
                     style={{ marginTop: hp(3) }}
                 />
-                <RNButton
-                    title="View Orders"
-                    onPress={() => navigation.navigate(NavRoutes.ORDER_HISTORY)}
-                    style={{ marginTop: hp(2) }}
-                    type="secondary"
-                />
+                {result === true && (
+                    <RNButton
+                        title="View Orders"
+                        onPress={() => navigation.navigate(NavRoutes.ORDER_HISTORY)}
+                        style={{ marginTop: hp(2) }}
+                        type="secondary"
+                    />
+                )
+                }
             </View>
         </View>
     );
 };
 
-export default PaymentSuccess;
+export default PaymentResult;
 
 const styles = StyleSheet.create({
     root: {

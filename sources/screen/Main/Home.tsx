@@ -251,7 +251,7 @@ const Home = ({ navigation }: any) => {
                         <FlatList
                             data={bestSeller}
                             renderItem={renderBestSeller}
-                            keyExtractor={(item: any) => item.id.toString()}
+                            keyExtractor={(item: any) => item.product_id.toString()}
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ gap: wp(3), paddingHorizontal: wp(4) }}

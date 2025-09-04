@@ -62,7 +62,7 @@ const Menu = ({ navigation, route }: any) => {
   const [hasError, setHasError] = useState(false)
   const [isReady, setIsReady] = useState(false)
   const [layoutReady, setLayoutReady] = useState(false);
-
+  const [uiReady, setUiReady] = useState(false);
   useEffect(() => {
     if (!isReady) return;
   
@@ -183,6 +183,7 @@ const Menu = ({ navigation, route }: any) => {
       });
       setCenterIndex(initialProductIndex);
       setIsReady(true); 
+      setUiReady(true);
     });
 
     return () => task.cancel();
@@ -195,7 +196,7 @@ const Menu = ({ navigation, route }: any) => {
   const startAngle = selectedAngle - 0.15;
   const endAngle = selectedAngle + 0.15;
 
-  if (isLoading || hasError) {
+  if (!uiReady ||isLoading || hasError) {
     return (
       <View style={[styles.root, RNStyles.center]}>
         <ActivityIndicator size="large" color={Colors.Brown} />
