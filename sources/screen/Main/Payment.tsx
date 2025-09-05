@@ -46,9 +46,9 @@ const Payment = ({ navigation, route }: any) => {
         }
 
         setLoading(true)
-
+        const addressId = await AsyncStorage.getItem('selectedAddressId')
         try {
-            const res = await PaymentRequester({amount, selectedMethod, product})
+            const res = await PaymentRequester({amount, selectedMethod, product, addressId})
 
             console.log("Redirect URL: ", res)
             navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url, method: selectedMethod, bill_reference_1: res.bill_reference_1, amount})

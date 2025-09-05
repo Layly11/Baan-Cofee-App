@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { debounce } from "lodash";
+import { debounce, size } from "lodash";
 import { useFocusEffect } from "@react-navigation/native";
 
 
@@ -26,6 +26,7 @@ const Cart = ({ navigation, route }: any) => {
             const res = await fetchCartRequester()
             // console.log("Cart: ", res.data.cart)
             setCartItems(res.data.cart)
+            console.log("CartItems: ", res.data.cart)
         } catch (err) {
             console.log(err)
         }
@@ -54,7 +55,7 @@ const Cart = ({ navigation, route }: any) => {
 
     const debouncedUpdateQuantity = debounce((id: any, quantity: any, extra_price: any) => {
         updateQuantity(id, quantity, extra_price);
-    }, 500)
+    },100)
 
     const handleIncrement = (id: any) => {
         setCartItems((prev: any) =>
@@ -195,7 +196,7 @@ const Cart = ({ navigation, route }: any) => {
                         />
                         <RNButton
                             title={"Checkout"}
-                            onPress={() => navigation.navigate(NavRoutes.PAYMENT, { amount: getTotal().toFixed(2), product: cartItems.map((p: any) => ({ id: p.product_id, name: p.name, amount: p.quantity })) })}
+                            onPress={() => navigation.navigate(NavRoutes.PAYMENT, { amount: getTotal().toFixed(2), product: cartItems.map((p: any) => ({ id: p.product_id, name: p.name, amount: p.quantity, price: p.extra_price, size: p.size  })) })}
                             style={{ marginVertical: hp(2) }}
                         />
                     </ScrollView>

@@ -1,6 +1,5 @@
 import { NavRoutes } from "@/sources/navigation";
 import { PayForQRRequester } from "@/sources/utils/requestUtils";
-import { result } from "lodash";
 
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
@@ -20,6 +19,8 @@ export default function PaymentWebView({ navigation, route }: any) {
         try {
            await PayForQRRequester({bill_reference_1, amount})
            Alert.alert("You have Pay", "Pay Successful")
+
+           navigation.navigate(NavRoutes.PAYMENT_RESULT, {result: true, amount})
         } catch (err) {
             console.log(err)
         }

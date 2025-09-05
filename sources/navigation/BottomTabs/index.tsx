@@ -11,12 +11,15 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 import Home from "@/sources/screen/Main/Home";
 import Menu from "@/sources/screen/Main/Menu";
 import Cart from "@/sources/screen/Main/Cart";
+import { useDispatch, useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
 const Index = () => {
   const navigation = useNavigation();
+  const customer = useSelector((state: any) => state.Auth.AsyncValue.user)
 
+  const LeftText = `Welcome ${customer?.name}!!`
   return (
     <Tab.Navigator
       screenOptions={{
@@ -40,7 +43,7 @@ const Index = () => {
             <RNHeader
               containerStyle={styles.header}
               LeftSvg={SVG.DRAWER}
-              LeftText="Good Morning!"
+              LeftText={LeftText}
               onLeftPress={() => navigation.dispatch(DrawerActions.openDrawer())}
               RightIcon={SVG.NOTIFICATION}
               rightIconWidth={wp(10)}

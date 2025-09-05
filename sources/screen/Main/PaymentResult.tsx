@@ -22,10 +22,10 @@ const PaymentResult = ({ navigation, route }: any) => {
 
     useEffect(() => {
         fetchPaymentData()
-    },[])
+    }, [])
     return (
         <View style={styles.root}>
-            { result === true }
+            {result === true}
             <RNHeader
                 containerStyle={styles.header}
                 LeftText="Payment"
@@ -33,29 +33,29 @@ const PaymentResult = ({ navigation, route }: any) => {
             />
             <View style={[styles.container, { paddingBottom: insets.bottom }]}>
 
-                { result === true ? ( 
+                {result === true ? (
                     <RNImage
-                    source={require("../../assets/Images/credit-card.png")} // รูป local asset
-                    style={styles.successImage}
-                    resizeMode="contain"
-                />
-            ) : (
-                 <RNImage
-                    source={require("../../assets/Images/credit-card-failed.png")} // รูป local asset
-                    style={styles.successImage}
-                    resizeMode="contain"
-                />
+                        source={require("../../assets/Images/credit-card.png")} // รูป local asset
+                        style={styles.successImage}
+                        resizeMode="contain"
+                    />
+                ) : (
+                    <RNImage
+                        source={require("../../assets/Images/credit-card-failed.png")} // รูป local asset
+                        style={styles.successImage}
+                        resizeMode="contain"
+                    />
                 )}
-               
+
                 <RNText size={FontSize.font22} family={FontFamily.Black} color={Colors.Brown}>
                     {result === true ? 'Payment Successful!' : 'Payment Failed!'}
                 </RNText>
                 {result === true && (
-                       <RNText size={FontSize.font16} color={Colors.Brown} style={{ marginTop: hp(1) }}>
-                    You have paid {amount ? amount :payment?.amount} Bath
-                </RNText>
-                )}  
-            
+                    <RNText size={FontSize.font16} color={Colors.Brown} style={{ marginTop: hp(1) }}>
+                        You have paid {amount ? amount : payment?.amount} Bath
+                    </RNText>
+                )}
+
                 <RNButton
                     title="Go to Home"
                     onPress={() => navigation.navigate('Drawer', {
@@ -69,7 +69,10 @@ const PaymentResult = ({ navigation, route }: any) => {
                 {result === true && (
                     <RNButton
                         title="View Orders"
-                        onPress={() => navigation.navigate(NavRoutes.ORDER_HISTORY)}
+                        onPress={() => navigation.navigate('Drawer', {
+                            screen: NavRoutes.ORDER_HISTORY,
+                        })
+                        }
                         style={{ marginTop: hp(2) }}
                         type="secondary"
                     />
