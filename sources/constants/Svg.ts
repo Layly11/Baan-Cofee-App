@@ -10,6 +10,7 @@ import Notification from "../assets/Svg/Notification.svg";
 import OnBoardBack from "../assets/Svg/OnBoardBack.svg";
 import Next from "../assets/Svg/Next.svg";
 import Back from "../assets/Svg/Back.svg";
+import Done from "../assets/Svg/Done.svg";
 import HotCoffee from "../assets/Svg/HotCoffee.svg";
 import ColdCoffee from "../assets/Svg/ColdCoffee.svg";
 import Drinks from "../assets/Svg/Drinks.svg";
@@ -26,6 +27,9 @@ import Increment from "../assets/Svg/Increment.svg";
 import Size from "../assets/Svg/Size.svg";
 import FSize from "../assets/Svg/FSize.svg";
 import Juice from "../assets/Svg/juice-svgrepo-com.svg";
+import Contact from "../assets/Svg/Contact.svg";
+import EmptyBox from "../assets/Svg/empty-box.svg";
+
 
 const SVG = {
     ADD: Add,
@@ -55,7 +59,10 @@ const SVG = {
     INCREMENT: Increment,
     SIZE: Size,
     F_SIZE: FSize,
-    JUICE: Juice
+    JUICE: Juice,
+    DONE: Done,
+    CONTACT: Contact,
+    EMPTY_BOX: EmptyBox
 }
 
 export default SVG;

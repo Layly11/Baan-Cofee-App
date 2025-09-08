@@ -1,9 +1,10 @@
-import { RNHeader, RNImage, RNStyles, RNText } from "@/sources/common";
+import { RNButton, RNHeader, RNImage, RNStyles, RNText } from "@/sources/common";
 import SVG from "@/sources/constants/Svg";
+import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { fetchOrderHistoryRequester } from "@/sources/utils/requestUtils";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -21,7 +22,9 @@ const OrderHistory = ({ navigation, route }: any) => {
 
   useEffect(() => {
     fetchOrderHistory()
-  },[])
+  }, [])
+  
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -38,52 +41,83 @@ const OrderHistory = ({ navigation, route }: any) => {
         title={"Order History"}
       />
 
-      <ScrollView style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {OrderHistory.map((item:any) => (
-          <View key={item.id} style={styles.addressCard}>
-            <View style={styles.imageContainer}>
-              <View style={styles.imageBackground} />
-              <RNImage source={{uri: item.imageSource}} style={styles.image} />
-            </View>
-            <View style={{ width: wp(55), gap: hp(0.8) }}>
-              <View style={RNStyles.flexRowBetween}>
-                <RNText
-                  size={FontSize.font14}
-                  family={FontFamily.Black}
-                  color={Colors.Brown}
-                >{item.size}</RNText>
-                <RNText
-                  size={FontSize.font14}
-                  family={FontFamily.Black}
-                  color={Colors.Brown}
-                >{item.orderID}</RNText>
+        {OrderHistory.length === 0 
+        ? (
+
+          <View style={[styles.container, RNStyles.center]}>
+          <SVG.EMPTY_BOX width={wp(40)} height={wp(40)} />
+          <RNText
+            size={FontSize.font20}
+            family={FontFamily.Bold}
+            color={Colors.Brown}
+            style={{ marginTop: hp(2) }}
+          >
+            No Order History
+          </RNText>
+          <RNText size={FontSize.font14} color={Colors.Placeholder}>
+            You have not placed any orders yet.
+          </RNText>
+          <View style={{ marginTop: hp(2) }}>
+            <RNButton
+              title="Go Shopping"
+              onPress={() => navigation.navigate(NavRoutes.HOME)}
+            />
+          </View>
+        </View>
+        ) 
+        : (
+          <ScrollView style={[styles.container, { paddingBottom: insets.bottom }]}>
+        {OrderHistory.map((item: any) => (
+          <TouchableOpacity
+            key={item.id}
+            onPress={() => navigation.navigate(NavRoutes.TRACK_ORDER, { orderId: item.orderID })}
+          >
+            <View key={item.id} style={styles.addressCard}>
+              <View style={styles.imageContainer}>
+                <View style={styles.imageBackground} />
+                <RNImage source={{ uri: item.imageSource }} style={styles.image} />
               </View>
-               <RNText
-                size={FontSize.font18}
-                family={FontFamily.Black}
-              >{item.name}</RNText>
-              <RNText
-                size={FontSize.font14}
-                color={Colors.Brown}
-              >{item.description}</RNText>
+              <View style={{ width: wp(55), gap: hp(0.8) }}>
                 <View style={RNStyles.flexRowBetween}>
-                   <RNText size={FontSize.font14} family={FontFamily.Bold}>
-                  Order on :{" "}
                   <RNText
-                    color={Colors.Brown}
                     size={FontSize.font14}
-                    family={FontFamily.Bold}
-                  >{item.time}</RNText>
-                </RNText>
-                 <RNText
+                    family={FontFamily.Black}
+                    color={Colors.Brown}
+                  >{item.size}</RNText>
+                  <RNText
+                    size={FontSize.font14}
+                    family={FontFamily.Black}
+                    color={Colors.Brown}
+                  >{item.orderID}</RNText>
+                </View>
+                <RNText
                   size={FontSize.font18}
                   family={FontFamily.Black}
-                >{item.price}</RNText>
+                >{item.name}</RNText>
+                <RNText
+                  size={FontSize.font14}
+                  color={Colors.Brown}
+                >{item.description}</RNText>
+                <View style={RNStyles.flexRowBetween}>
+                  <RNText size={FontSize.font14} family={FontFamily.Bold}>
+                    Order on :{" "}
+                    <RNText
+                      color={Colors.Brown}
+                      size={FontSize.font14}
+                      family={FontFamily.Bold}
+                    >{item.time}</RNText>
+                  </RNText>
+                  <RNText
+                    size={FontSize.font18}
+                    family={FontFamily.Black}
+                  >{item.price}</RNText>
                 </View>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
+        )}
     </View>
   )
 }

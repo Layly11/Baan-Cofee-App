@@ -212,11 +212,9 @@ const Menu = ({ navigation, route }: any) => {
       <RNHeader
         containerStyle={styles.header}
         LeftText={"Menu"}
-        RightIcon={SVG.SEARCH}
         rightIconWidth={wp(5)}
         rightIconHeight={wp(5)}
         rightIconStyle={styles.searchIcon}
-        onRightPress={() => navigation.navigate(NavRoutes.SEARCH)}
       />
 
       <View style={{ flex: 1, backgroundColor: Colors.White }}>

@@ -710,3 +710,24 @@ export const fetchOrderHistoryRequester =  async () => {
         throw error;
     }
 }
+
+
+export const getTrackOrderRequester =  async (orderId?: any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/trackOrder?orderId=${orderId}`, {
+            method: "GET",
+        })
+
+        const data = await res.json()
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

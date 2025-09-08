@@ -8,6 +8,7 @@ import Product from "../screen/Main/Product";
 import Payment from "../screen/Main/Payment";
 import PaymentWebView from "../screen/Main/PaymentWebView";
 import PaymentResult from "../screen/Main/PaymentResult";
+import TrackOrder from "../screen/Main/TrackOrder";
 
 const Stack = createStackNavigator();
 const AppRoute = () => {
@@ -24,6 +25,7 @@ const AppRoute = () => {
             <Stack.Screen name={NavRoutes.PAYMENT} component={Payment} />
             <Stack.Screen name={NavRoutes.PAYMENT_WEB_VIEW} component={PaymentWebView} />
             <Stack.Screen name={NavRoutes.PAYMENT_RESULT} component={PaymentResult} />
+            <Stack.Screen name={NavRoutes.TRACK_ORDER} component={TrackOrder} />
         </Stack.Navigator>
     )
 }

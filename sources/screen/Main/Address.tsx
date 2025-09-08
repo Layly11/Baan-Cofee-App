@@ -35,13 +35,13 @@ const Address = ({ navigation, route }: any) => {
       console.log(res.data.address)
 
       const storeId = await AsyncStorage.getItem('selectedAddressId')
-      if(storeId) setSelectedAddressId(Number(storeId))
+      if (storeId) setSelectedAddressId(Number(storeId))
     } catch (err: any) {
       console.log(err)
     }
   }
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchAddress()
   }, [])
 
@@ -69,9 +69,9 @@ const Address = ({ navigation, route }: any) => {
         setAddresses((prev: any) => prev.filter((a: any) => a.id !== id));
 
         if (selectedAddressId === id) {
-        setSelectedAddressId(null);
-        await AsyncStorage.removeItem('selectedAddressId');
-      }
+          setSelectedAddressId(null);
+          await AsyncStorage.removeItem('selectedAddressId');
+        }
 
         setSelectedId(null);
       } else {
@@ -105,7 +105,7 @@ const Address = ({ navigation, route }: any) => {
     }
   };
 
-   const selectAddress = async (id: number) => {
+  const selectAddress = async (id: number) => {
     setSelectedAddressId(id);
     await AsyncStorage.setItem('selectedAddressId', id.toString());
   };
@@ -122,42 +122,68 @@ const Address = ({ navigation, route }: any) => {
         title={"My Addresses"}
       />
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {addresses.map((item: any) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.addressCard,
-              selectedAddressId === item.id && { borderColor: Colors.DarkBrown, borderWidth: 2 },
-            ]}
-            onPress={() => selectAddress(item.id)}
-          >
-            <View style={RNStyles.flexRowBetween}>
-              <RNText size={FontSize.font18} family={FontFamily.Bold}>
-                {item.name || item.type}
+        {addresses.length === 0
+          ? (
+            <View style={[RNStyles.center, { flex: 1 }]}>
+              <SVG.LOCATION width={wp(35)} height={wp(35)} />
+              <RNText
+                size={FontSize.font20}
+                family={FontFamily.Bold}
+                color={Colors.Brown}
+                style={{ marginTop: hp(2) }}
+              >
+                No Address Found
               </RNText>
-              <View style={RNStyles.flexRow}>
-                <TouchableOpacity onPress={() => openEdit(item)} style={{ marginRight: wp(2) }}>
-                  <SVG.EDIT />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => confirmDelete(item.id)}>
-                  <SVG.CLOSE />
-                </TouchableOpacity>
+              <RNText size={FontSize.font14} color={Colors.Placeholder}>
+                Add your first delivery address to continue
+              </RNText>
+              <View style={{ marginTop: hp(2), width: wp(60) }}>
+                <RNButton title={"Add New Address"} onPress={openAdd} />
               </View>
             </View>
+          )
+          : (
+            <>
+              {addresses.map((item: any) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.addressCard,
+                    selectedAddressId === item.id && { borderColor: Colors.DarkBrown, borderWidth: 2 },
+                  ]}
+                  onPress={() => selectAddress(item.id)}
+                >
+                  <View style={RNStyles.flexRowBetween}>
+                    <RNText size={FontSize.font18} family={FontFamily.Bold}>
+                      {item.name || item.type}
+                    </RNText>
+                    <View style={RNStyles.flexRow}>
+                      <TouchableOpacity onPress={() => openEdit(item)} style={{ marginRight: wp(2) }}>
+                        <SVG.EDIT />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => confirmDelete(item.id)}>
+                        <SVG.CLOSE />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
 
-            <View style={[RNStyles.flexRow, { gap: wp(2) }]}>
-              <SVG.LOCATION />
-              <RNText color={Colors.Brown} size={FontSize.font15} style={{ width: wp(80) }}>
-                {`${item.house_no ? item.house_no + ', ' : ''}${item.village ? item.village + ', ' : ''}${item.street}${item.city ? ', ' + item.city : ''}`}
-              </RNText>
-            </View>
-          </TouchableOpacity>
-        ))}
+                  <View style={[RNStyles.flexRow, { gap: wp(2) }]}>
+                    <SVG.LOCATION />
+                    <RNText color={Colors.Brown} size={FontSize.font15} style={{ width: wp(80) }}>
+                      {`${item.house_no ? item.house_no + ', ' : ''}${item.village ? item.village + ', ' : ''}${item.street}${item.city ? ', ' + item.city : ''}`}
+                    </RNText>
+                  </View>
+                </TouchableOpacity>
+              ))}
 
-       
-            <View style={styles.deleteButton}>
-              <RNButton title={"Add New Address"} onPress={openAdd} />
-            </View>
+                <View style={styles.deleteButton}>
+          <RNButton title={"Add New Address"} onPress={openAdd} />
+        </View>
+            </>
+          )
+        }
+
+
 
 
 

@@ -80,17 +80,7 @@ const DrawerContent = ({ navigation }: any) => {
                         label: "Order History",
                         route: NavRoutes.ORDER_HISTORY,
                         params: { fromDrawer: true },
-                    },
-                    {
-                        label: "Terms & Conditions",
-                        route: NavRoutes.TERMS,
-                        params: { fromDrawer: true },
-                    },
-                    {
-                        label: "Contact Us",
-                        route: NavRoutes.CONTACT_US,
-                        params: { fromDrawer: true },
-                    },
+                    }
                 ].map((item: any, index: any) => (
                     <Pressable
                         key={index}

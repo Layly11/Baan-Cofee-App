@@ -7,6 +7,7 @@ import DrawerContent from './DrawerContent'
 import NavRoutes from "../NavRoutes";
 import Address from "@/sources/screen/Main/Address";
 import OrderHistory from "@/sources/screen/Main/OrderHistory";
+import TrackOrder from "@/sources/screen/Main/TrackOrder";
 
 const Drawer = createDrawerNavigator()
 const DrawerNavigator = () => {
@@ -24,6 +25,7 @@ const DrawerNavigator = () => {
             <Drawer.Screen name="BottomTabs" component={Index}/>
             <Drawer.Screen name={NavRoutes.ADDRESS} component={Address} />
             <Drawer.Screen name={NavRoutes.ORDER_HISTORY} component={OrderHistory} />
+            <Drawer.Screen name={NavRoutes.TRACK_ORDER} component={TrackOrder} />
         </Drawer.Navigator>
     )
 }
