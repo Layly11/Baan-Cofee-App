@@ -731,3 +731,25 @@ export const getTrackOrderRequester =  async (orderId?: any) => {
         throw error;
     }
 }
+
+
+export const CancelOrderRequester =  async (payload: any) => {
+    try {
+        const res = await authFetch(`http://${SERVER_API}/order/cancel`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+
+        const data = await res.json()
+        if (!res.ok) {
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
+        }
+
+        return data.data;
+    } catch (error) {
+        console.error(error)
+        throw error;
+    }
+}

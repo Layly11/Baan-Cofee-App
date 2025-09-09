@@ -58,7 +58,7 @@ const PaymentResult = ({ navigation, route }: any) => {
 
                 <RNButton
                     title="Go to Home"
-                    onPress={() => navigation.navigate('Drawer', {
+                    onPress={() => navigation.replace('Drawer', {
                         screen: 'BottomTabs',
                         params: {
                             screen: NavRoutes.HOME,
@@ -69,7 +69,7 @@ const PaymentResult = ({ navigation, route }: any) => {
                 {result === true && (
                     <RNButton
                         title="View Orders"
-                        onPress={() => navigation.navigate('Drawer', {
+                        onPress={() => navigation.replace('Drawer', {
                             screen: NavRoutes.ORDER_HISTORY,
                         })
                         }

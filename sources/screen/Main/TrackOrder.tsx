@@ -1,22 +1,13 @@
 import { RNButton, RNHeader, RNStyles, RNText } from "@/sources/common";
+import ConfirmModal from "@/sources/component/ConfirmModal";
 import SVG from "@/sources/constants/Svg";
 import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
-import { getTrackOrderRequester } from "@/sources/utils/requestUtils";
+import { CancelOrderRequester, getTrackOrderRequester } from "@/sources/utils/requestUtils";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-
-
-
-// const STEPS = [
-//     { label: "Order Placed", status: "done" },
-//     { label: "Preparing", status: "done" },
-//     { label: "Out for Delivery", status: "current" },
-//     { label: "Delivered", status: "pending" },
-// ];
-
 
 
 const TimelineStep = ({ step }: any) => {
@@ -41,23 +32,32 @@ const TrackOrder = ({ navigation, route }: any) => {
     const insets = useSafeAreaInsets();
     const { orderId } = route.params || {};
     const [order, setOrder] = useState({}) as any
+    const [modalCancelOrderVisible, setModalCancelVisible] = useState(false);
     const customer = useSelector((state: any) => state.Auth.AsyncValue.user)
+    const [loading, setLoading] = useState(false)
+    const STEPS = [] as any
 
-    const STEPS = [
-        { label: "Order Placed", status: "done" },
-        {
+    if (order?.status === "cancelled") {
+        STEPS.push({ label: "Order Placed", status: "done" });
+        STEPS.push({ label: "Cancelled", status: "done" });
+    } else {
+        STEPS.push({ label: "Order Placed", status: "done" });
+        STEPS.push({
             label: "Preparing",
             status: order?.status === "preparing" ? "done" : (["out_for_delivery", "complete"].includes(order?.status) ? "done" : "pending")
-        },
-        {
+        });
+        STEPS.push({
             label: "Out for Delivery",
             status: order?.status === "out_for_delivery" ? "done" : (order?.status === "complete" ? "done" : "pending")
-        },
-        {
+        });
+        STEPS.push({
             label: "Delivered",
             status: order?.status === "complete" ? "done" : "pending"
-        },
-    ];
+        });
+    }
+
+
+    const canCancel = order?.status === "pending" || order?.status === "preparing";
 
     const ferchTrackOrder = async () => {
         try {
@@ -73,6 +73,34 @@ const TrackOrder = ({ navigation, route }: any) => {
         ferchTrackOrder()
     }, [orderId])
 
+    const handleCancelOrder = async () => {
+        setModalCancelVisible(false)
+        setLoading(true)
+        try {
+            await CancelOrderRequester({ order_id: order.order_id })
+            setOrder((prev: any) => ({
+                ...prev,
+                status: "cancelled",
+            }));
+
+            Alert.alert("Cancel Success", "Your order has been cancelled");
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
+    }
+     if (loading) {
+            return (
+                <View style={[styles.root, RNStyles.center]}>
+                    <ActivityIndicator size="large" color={Colors.Brown} />
+                    <RNText style={{ marginTop: 10, color: Colors.Brown }}>
+                        Loading...
+                    </RNText>
+                </View>
+            )
+        }
+
     if (!order || !order.order_id) {
         return (
             <View style={styles.container}>
@@ -83,7 +111,7 @@ const TrackOrder = ({ navigation, route }: any) => {
                     title={"Track Order"}
                 />
                 <View style={[styles.content, { paddingBottom: insets.bottom, ...RNStyles.center }]}>
-                    <SVG.EMPTY_BOX width={wp(40)} height={wp(40)} /> 
+                    <SVG.EMPTY_BOX width={wp(40)} height={wp(40)} />
                     <RNText size={FontSize.font20} family={FontFamily.Bold} color={Colors.Brown}>
                         No Orders Found
                     </RNText>
@@ -94,11 +122,11 @@ const TrackOrder = ({ navigation, route }: any) => {
                         <RNButton
                             title="Go Shopping"
                             onPress={() => navigation.navigate('Drawer', {
-                        screen: 'BottomTabs',
-                        params: {
-                            screen: NavRoutes.HOME,
-                        },
-                    })} // ไปหน้า Home
+                                screen: 'BottomTabs',
+                                params: {
+                                    screen: NavRoutes.HOME,
+                                },
+                            })} // ไปหน้า Home
                         />
                     </View>
                 </View>
@@ -109,7 +137,7 @@ const TrackOrder = ({ navigation, route }: any) => {
     const renderTimeline = () => (
         <View style={{ gap: hp(4) }}>
             <View style={styles.dashedLine} />
-            {STEPS.map((step, index) => (
+            {STEPS.map((step: any, index: any) => (
                 <TimelineStep key={index} step={step} />
             ))}
         </View>
@@ -167,13 +195,29 @@ const TrackOrder = ({ navigation, route }: any) => {
                     </View>
                 </View>
 
+
                 <View style={styles.deleteButton}>
+                    {canCancel && (
+                        <View style={{ marginTop: hp(2) }}>
+                            <RNButton title="Cancel Order" bgColor={Colors.Red} onPress={() => setModalCancelVisible(true)} />
+                        </View>
+                    )}
                     <RNButton
                         title={"Back to Home"}
                         onPress={() => navigation.goBack()}
                     />
                 </View>
             </View>
+
+            <ConfirmModal
+                visible={modalCancelOrderVisible}
+                title={"Cancel Order"}
+                subTitle={"Are you sure you want to Cancel your Order?"}
+                cancelText={"Cancel"}
+                confirmText={"Confirm"}
+                onConfirm={handleCancelOrder}
+                onCancel={() => setModalCancelVisible(false)}
+            />
         </View>
     )
 }
@@ -181,6 +225,10 @@ const TrackOrder = ({ navigation, route }: any) => {
 export default TrackOrder;
 
 const styles = StyleSheet.create({
+      root: {
+        flex: 1,
+        backgroundColor: Colors.White,
+    },
     container: { flex: 1 },
     header: {
         backgroundColor: Colors.DarkBrown,
@@ -243,5 +291,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-end",
         bottom: isIOS ? hp(0) : hp(2),
+        gap: hp(2)
     },
 });
