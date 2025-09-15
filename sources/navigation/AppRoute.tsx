@@ -9,6 +9,7 @@ import Payment from "../screen/Main/Payment";
 import PaymentWebView from "../screen/Main/PaymentWebView";
 import PaymentResult from "../screen/Main/PaymentResult";
 import TrackOrder from "../screen/Main/TrackOrder";
+import Notification from "../screen/Main/Notification";
 
 const Stack = createStackNavigator();
 const AppRoute = () => {
@@ -20,6 +21,7 @@ const AppRoute = () => {
             options={{headerShown: false}}
             />
             <Stack.Screen name={NavRoutes.EDIT_PROFILE} component={EditProfile} />
+            <Stack.Screen name={NavRoutes.NOTIFICATION} component={Notification} />
             <Stack.Screen name={NavRoutes.ADDRESS} component={Address} />
             <Stack.Screen name={NavRoutes.PRODUCT} component={Product} />
             <Stack.Screen name={NavRoutes.PAYMENT} component={Payment} />

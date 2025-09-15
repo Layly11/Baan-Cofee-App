@@ -29,6 +29,7 @@ import FSize from "../assets/Svg/FSize.svg";
 import Juice from "../assets/Svg/juice-svgrepo-com.svg";
 import Contact from "../assets/Svg/Contact.svg";
 import EmptyBox from "../assets/Svg/empty-box.svg";
+import Bell from "../assets/Svg/Bell.svg";
 
 
 const SVG = {
@@ -62,7 +63,8 @@ const SVG = {
     JUICE: Juice,
     DONE: Done,
     CONTACT: Contact,
-    EMPTY_BOX: EmptyBox
+    EMPTY_BOX: EmptyBox,
+    BELL: Bell,
 }
 
 export default SVG;

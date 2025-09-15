@@ -3,7 +3,8 @@ import SVG from "@/sources/constants/Svg";
 import { NavRoutes } from "@/sources/navigation";
 import { Colors, FontFamily, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { fetchOrderHistoryRequester } from "@/sources/utils/requestUtils";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,9 +21,16 @@ const OrderHistory = ({ navigation, route }: any) => {
     }
   }
 
-  useEffect(() => {
-    fetchOrderHistory()
-  }, [])
+    useFocusEffect(
+          useCallback(() => {
+              fetchOrderHistory()
+  
+              return () => {
+              };
+          }, [])
+      );
+  
+
   
   
 

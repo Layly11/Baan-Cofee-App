@@ -196,7 +196,7 @@ const Cart = ({ navigation, route }: any) => {
                         />
                         <RNButton
                             title={"Checkout"}
-                            onPress={() => navigation.navigate(NavRoutes.PAYMENT, { amount: getTotal().toFixed(2), product: cartItems.map((p: any) => ({ id: p.product_id, name: p.name, amount: p.quantity, price: p.extra_price, size: p.size  })) })}
+                            onPress={() => navigation.navigate(NavRoutes.PAYMENT, { amount: getTotal().toFixed(2), product: cartItems.map((p: any) => ({ id: p.product_id, name: p.name, amount: p.quantity, price: p.extra_price, size: p.size, description: p.description, image_url: p.imageSource  })) })}
                             style={{ marginVertical: hp(2) }}
                         />
                     </ScrollView>
