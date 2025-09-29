@@ -23,32 +23,6 @@ const Notification = ({ navigation, route } :any) => {
   useEffect(() => {
     fetchNoftifyOder()
   },[])
-  const addressList = [
-    {
-      id: 1,
-      title: "Order Updates",
-      desc: "Your coffee is ready for pickup",
-      time: "20m ago",
-    },
-    {
-      id: 2,
-      title: "Your Order is Ready!",
-      desc: "Your Iced Latte is ready for pickup at the nearest store.",
-      time: "20m ago",
-    },
-    {
-      id: 3,
-      title: "Promotions and Offers",
-      desc: "20% off on your next coffee",
-      time: "20m ago",
-    },
-    {
-      id: 4,
-      title: "Flash Sale! 15% Off",
-      desc: "Enjoy 15% off all drinks today only. Don’t miss out!",
-      time: "20m ago",
-    },
-  ];
 
   return (
     <View style={{ flex: 1 }}>
