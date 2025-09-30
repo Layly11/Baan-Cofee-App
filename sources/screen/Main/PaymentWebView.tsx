@@ -20,7 +20,7 @@ export default function PaymentWebView({ navigation, route }: any) {
            await PayForQRRequester({bill_reference_1, amount})
            Alert.alert("You have Pay", "Pay Successful")
 
-           navigation.replace(NavRoutes.PAYMENT_RESULT, {result: true, amount})
+        //    navigation.replace(NavRoutes.PAYMENT_RESULT, {result: true, amount})
         } catch (err) {
             console.log(err)
         }

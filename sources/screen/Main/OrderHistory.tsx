@@ -21,18 +21,18 @@ const OrderHistory = ({ navigation, route }: any) => {
     }
   }
 
-    useFocusEffect(
-          useCallback(() => {
-              fetchOrderHistory()
-  
-              return () => {
-              };
-          }, [])
-      );
-  
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrderHistory()
 
-  
-  
+      return () => {
+      };
+    }, [])
+  );
+
+
+
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -49,82 +49,87 @@ const OrderHistory = ({ navigation, route }: any) => {
         title={"Order History"}
       />
 
-        {OrderHistory.length === 0 
+      {OrderHistory.length === 0
         ? (
 
           <View style={[styles.container, RNStyles.center]}>
-          <SVG.EMPTY_BOX width={wp(40)} height={wp(40)} />
-          <RNText
-            size={FontSize.font20}
-            family={FontFamily.Bold}
-            color={Colors.Brown}
-            style={{ marginTop: hp(2) }}
-          >
-            No Order History
-          </RNText>
-          <RNText size={FontSize.font14} color={Colors.Placeholder}>
-            You have not placed any orders yet.
-          </RNText>
-          <View style={{ marginTop: hp(2) }}>
-            <RNButton
-              title="Go Shopping"
-              onPress={() => navigation.navigate(NavRoutes.HOME)}
-            />
+            <SVG.EMPTY_BOX width={wp(40)} height={wp(40)} />
+            <RNText
+              size={FontSize.font20}
+              family={FontFamily.Bold}
+              color={Colors.Brown}
+              style={{ marginTop: hp(2) }}
+            >
+              No Order History
+            </RNText>
+            <RNText size={FontSize.font14} color={Colors.Placeholder}>
+              You have not placed any orders yet.
+            </RNText>
+            <View style={{ marginTop: hp(2) }}>
+              <RNButton
+                title="Go Shopping"
+                onPress={() => navigation.navigate('Drawer', {
+                  screen: 'BottomTabs',
+                  params: {
+                    screen: NavRoutes.HOME,
+                  },
+                })}
+              />
+            </View>
           </View>
-        </View>
-        ) 
+        )
         : (
           <ScrollView style={[styles.container, { paddingBottom: insets.bottom }]}>
-        {OrderHistory.map((item: any) => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => navigation.navigate(NavRoutes.TRACK_ORDER, { orderId: item.orderID })}
-          >
-            <View key={item.id} style={styles.addressCard}>
-              <View style={styles.imageContainer}>
-                <View style={styles.imageBackground} />
-                <RNImage source={{ uri: item.imageSource }} style={styles.image} />
-              </View>
-              <View style={{ width: wp(55), gap: hp(0.8) }}>
-                <View style={RNStyles.flexRowBetween}>
-                  <RNText
-                    size={FontSize.font14}
-                    family={FontFamily.Black}
-                    color={Colors.Brown}
-                  >{item.size}</RNText>
-                  <RNText
-                    size={FontSize.font14}
-                    family={FontFamily.Black}
-                    color={Colors.Brown}
-                  >{item.orderID}</RNText>
-                </View>
-                <RNText
-                  size={FontSize.font18}
-                  family={FontFamily.Black}
-                >{item.name}</RNText>
-                <RNText
-                  size={FontSize.font14}
-                  color={Colors.Brown}
-                >{item.description}</RNText>
-                <View style={RNStyles.flexRowBetween}>
-                  <RNText size={FontSize.font14} family={FontFamily.Bold}>
-                    Order on :{" "}
+            {OrderHistory.map((item: any) => (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => navigation.navigate(NavRoutes.TRACK_ORDER, { orderId: item.orderID })}
+              >
+                <View key={item.id} style={styles.addressCard}>
+                  <View style={styles.imageContainer}>
+                    <View style={styles.imageBackground} />
+                    <RNImage source={{ uri: item.imageSource }} style={styles.image} />
+                  </View>
+                  <View style={{ width: wp(55), gap: hp(0.8) }}>
+                    <View style={RNStyles.flexRowBetween}>
+                      <RNText
+                        size={FontSize.font14}
+                        family={FontFamily.Black}
+                        color={Colors.Brown}
+                      >{item.size}</RNText>
+                      <RNText
+                        size={FontSize.font14}
+                        family={FontFamily.Black}
+                        color={Colors.Brown}
+                      >{item.orderID}</RNText>
+                    </View>
                     <RNText
-                      color={Colors.Brown}
+                      size={FontSize.font18}
+                      family={FontFamily.Black}
+                    >{item.name}</RNText>
+                    <RNText
                       size={FontSize.font14}
-                      family={FontFamily.Bold}
-                    >{item.time}</RNText>
-                  </RNText>
-                  <RNText
-                    size={FontSize.font18}
-                    family={FontFamily.Black}
-                  >{item.price}</RNText>
+                      color={Colors.Brown}
+                    >{item.description}</RNText>
+                    <View style={RNStyles.flexRowBetween}>
+                      <RNText size={FontSize.font14} family={FontFamily.Bold}>
+                        Order on :{" "}
+                        <RNText
+                          color={Colors.Brown}
+                          size={FontSize.font14}
+                          family={FontFamily.Bold}
+                        >{item.time}</RNText>
+                      </RNText>
+                      <RNText
+                        size={FontSize.font18}
+                        family={FontFamily.Black}
+                      >{item.price}</RNText>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         )}
     </View>
   )
