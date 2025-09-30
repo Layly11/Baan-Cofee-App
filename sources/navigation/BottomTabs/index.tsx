@@ -15,11 +15,20 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Tab = createBottomTabNavigator();
 
+const truncateText = (text: string | undefined | null, maxLength: number) => {
+  if (!text) return "";
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + "...";
+  }
+  return text;
+};
+
 const Index = () => {
   const navigation = useNavigation();
   const customer = useSelector((state: any) => state.Auth.AsyncValue.user)
 
-  const LeftText = `Welcome ${customer?.name}!!`
+  const customerName = truncateText(customer?.name, 10);
+  const LeftText = `Welcome ${customerName}!`
   return (
     <Tab.Navigator
       screenOptions={{

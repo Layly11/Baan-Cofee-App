@@ -1,12 +1,15 @@
 import Constants from 'expo-constants';
 import { authFetch } from "./fetch";
-const SERVER_API = Constants.expoConfig?.extra?.serverApi
+const SERVER_DOMAIN = Constants.expoConfig?.extra?.serverApi
 
+const BASE_URL = SERVER_DOMAIN 
+    ? `https://${SERVER_DOMAIN}`
+    : 'localhost:3000';
 
 
 export const registerCustomerRequester = async ({ name, email, password, phone }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/register`, {
+        const res = await fetch(`${BASE_URL}/customer/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,7 +33,7 @@ export const registerCustomerRequester = async ({ name, email, password, phone }
 
 export const checkCustomerExistRequester = async ({ email, phone }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/check-customer?email=${email}&phone=${phone}`, {
+        const res = await fetch(`${BASE_URL}/customer/check-customer?email=${email}&phone=${phone}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -55,7 +58,7 @@ export const checkCustomerExistRequester = async ({ email, phone }: any) => {
 
 export const verifyOtpRequester = async ({ email, otp }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/verify-otp`, {
+        const res = await fetch(`${BASE_URL}/customer/verify-otp`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -80,7 +83,7 @@ export const verifyOtpRequester = async ({ email, otp }: any) => {
 
 export const resendOtpRequester = async ({ email }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/resend-otp`, {
+        const res = await fetch(`${BASE_URL}/customer/resend-otp`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -104,7 +107,7 @@ export const resendOtpRequester = async ({ email }: any) => {
 
 export const LoginCustomerRequester = async ({ email, password }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/login`, {
+        const res = await fetch(`${BASE_URL}/customer/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -130,7 +133,7 @@ export const LoginCustomerRequester = async ({ email, password }: any) => {
 
 export const fetchProfileRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/customer/profile`, {
+        const res = await authFetch(`${BASE_URL}/customer/profile`, {
             method: 'GET'
         });
         const data = await res.json();
@@ -149,7 +152,7 @@ export const fetchProfileRequester = async () => {
 }
 export const forgotPasswordRequester = async ({ email }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/forgot-password`, {
+        const res = await fetch(`${BASE_URL}/customer/forgot-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -175,7 +178,7 @@ export const forgotPasswordRequester = async ({ email }: any) => {
 
 export const resendResetOtpRequester = async ({ email }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/resend-reset-otp`, {
+        const res = await fetch(`${BASE_URL}/customer/resend-reset-otp`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -200,7 +203,7 @@ export const resendResetOtpRequester = async ({ email }: any) => {
 
 export const verifyResetOtpRequester = async ({ email, otp }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/verify-reset-otp`, {
+        const res = await fetch(`${BASE_URL}/customer/verify-reset-otp`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -224,7 +227,7 @@ export const verifyResetOtpRequester = async ({ email, otp }: any) => {
 
 export const resetPasswordRequester = async ({ email, newPassword }: any) => {
     try {
-        const res = await fetch(`http://${SERVER_API}/customer/reset-password`, {
+        const res = await fetch(`${BASE_URL}/customer/reset-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -252,7 +255,7 @@ export const resetPasswordRequester = async ({ email, newPassword }: any) => {
 
 export const fetchCategoryRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/products/category`, {
+        const res = await authFetch(`${BASE_URL}/products/category`, {
             method: 'GET'
         });
 
@@ -273,7 +276,7 @@ export const fetchCategoryRequester = async () => {
 
 export const fetchBestSellerRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/products/bestSeller`)
+        const res = await authFetch(`${BASE_URL}/products/bestSeller`)
         const data = await res.json()
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
@@ -292,7 +295,7 @@ export const fetchBestSellerRequester = async () => {
 
 export const fetchProductDataRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/products/productData`)
+        const res = await authFetch(`${BASE_URL}/products/productData`)
         const data = await res.json()
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
@@ -310,7 +313,7 @@ export const fetchProductDataRequester = async () => {
 
 export const fetchProductSizeRequester = async (id: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/products/sizes/${id}`, {
+        const res = await authFetch(`${BASE_URL}/products/sizes/${id}`, {
             method: "GET",
         })
         const data = await res.json()
@@ -341,7 +344,7 @@ export const uploadProfileImageRequester = async (params: { userId: number; uri:
             name: `profile_${userId}.${ext || 'jpg'}`
         } as any)
 
-        const res = await fetch(`http://${SERVER_API}/profile/upload-image`, {
+        const res = await fetch(`${BASE_URL}/profile/upload-image`, {
             method: "POST",
             body: form,
         })
@@ -364,7 +367,7 @@ export const uploadProfileImageRequester = async (params: { userId: number; uri:
 export const updateProfileRequester = async (payload: any) => {
     try {
 
-        const res = await fetch(`http://${SERVER_API}/profile/edit`, {
+        const res = await fetch(`${BASE_URL}/profile/edit`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -391,7 +394,7 @@ export const updateProfileRequester = async (payload: any) => {
 export const deleteProfileRequester = async () => {
     try {
 
-        const res = await authFetch(`http://${SERVER_API}/profile/delete`, {
+        const res = await authFetch(`${BASE_URL}/profile/delete`, {
             method: "DELETE",
         })
 
@@ -413,7 +416,7 @@ export const deleteProfileRequester = async () => {
 export const fetchAddressRequester = async () => {
     try {
 
-        const res = await authFetch(`http://${SERVER_API}/profile/address`, {
+        const res = await authFetch(`${BASE_URL}/profile/address`, {
             method: "GET",
         })
 
@@ -436,7 +439,7 @@ export const fetchAddressRequester = async () => {
 export const fetchAddressBySelectedRequester = async (id: any) => {
     try {
 
-        const res = await authFetch(`http://${SERVER_API}/profile/address/${id}`, {
+        const res = await authFetch(`${BASE_URL}/profile/address/${id}`, {
             method: "GET",
         })
 
@@ -458,7 +461,7 @@ export const fetchAddressBySelectedRequester = async (id: any) => {
 
 export const createAddressRequester = async (payload: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/profile/create/address`, {
+        const res = await authFetch(`${BASE_URL}/profile/create/address`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
@@ -478,7 +481,7 @@ export const createAddressRequester = async (payload: any) => {
 
 export const deleteAddressRequester = async (id: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/profile/delete/address/${id}`, {
+        const res = await authFetch(`${BASE_URL}/profile/delete/address/${id}`, {
             method: "DELETE",
         })
 
@@ -497,7 +500,7 @@ export const deleteAddressRequester = async (id: any) => {
 
 export const updateAddressRequester = async (id: any, payload: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/profile/edit/address/${id}`, {
+        const res = await authFetch(`${BASE_URL}/profile/edit/address/${id}`, {
             method: "PUT",
             body: JSON.stringify(payload)
         })
@@ -517,7 +520,7 @@ export const updateAddressRequester = async (id: any, payload: any) => {
 
 export const addToCartRequester = async (payload: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/cart/`, {
+        const res = await authFetch(`${BASE_URL}/cart/`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
@@ -538,7 +541,7 @@ export const addToCartRequester = async (payload: any) => {
 
 export const fetchCartRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/cart/`, {
+        const res = await authFetch(`${BASE_URL}/cart/`, {
             method: "GET",
         })
 
@@ -564,7 +567,7 @@ export const fetchCartRequester = async () => {
 
 export const deleteCartRequester = async (id: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/cart/delete/${id}`, {
+        const res = await authFetch(`${BASE_URL}/cart/delete/${id}`, {
             method: "DELETE",
         })
 
@@ -584,7 +587,7 @@ export const deleteCartRequester = async (id: any) => {
 
 export const updateQuantityRequester = async (payload: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/cart/update/quantity`, {
+        const res = await authFetch(`${BASE_URL}/cart/update/quantity`, {
             method: "PATCH",
             body: JSON.stringify(payload)
         })
@@ -605,7 +608,7 @@ export const updateQuantityRequester = async (payload: any) => {
 
 export const PaymentRequester = async (payload:any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/create/payment`, {
+        const res = await authFetch(`${BASE_URL}/order/create/payment`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
@@ -627,7 +630,7 @@ export const PaymentRequester = async (payload:any) => {
 
 export const createOrderRequester = async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/create`, {
+        const res = await authFetch(`${BASE_URL}/order/create`, {
             method: "POST",
         })
 
@@ -649,7 +652,7 @@ export const createOrderRequester = async () => {
 
 export const fetchOrderRequester = async (reference:any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/payment/${reference}`, {
+        const res = await authFetch(`${BASE_URL}/order/payment/${reference}`, {
             method: "GET"
         })
 
@@ -671,7 +674,7 @@ export const fetchOrderRequester = async (reference:any) => {
 
 export const PayForQRRequester = async (payload:any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/payment/qr`, {
+        const res = await authFetch(`${BASE_URL}/order/payment/qr`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
@@ -693,7 +696,7 @@ export const PayForQRRequester = async (payload:any) => {
 
 export const fetchOrderHistoryRequester =  async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/history`, {
+        const res = await authFetch(`${BASE_URL}/order/history`, {
             method: "GET",
         })
 
@@ -714,7 +717,7 @@ export const fetchOrderHistoryRequester =  async () => {
 
 export const getTrackOrderRequester =  async (orderId?: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/trackOrder?orderId=${orderId}`, {
+        const res = await authFetch(`${BASE_URL}/order/trackOrder?orderId=${orderId}`, {
             method: "GET",
         })
 
@@ -735,7 +738,7 @@ export const getTrackOrderRequester =  async (orderId?: any) => {
 
 export const CancelOrderRequester =  async (payload: any) => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/cancel`, {
+        const res = await authFetch(`${BASE_URL}/order/cancel`, {
             method: "POST",
             body: JSON.stringify(payload)
         })
@@ -756,7 +759,7 @@ export const CancelOrderRequester =  async (payload: any) => {
 
 export const fetchNotifyOrderRequester =  async () => {
     try {
-        const res = await authFetch(`http://${SERVER_API}/order/notification`, {
+        const res = await authFetch(`${BASE_URL}/order/notification`, {
             method: "GET"
         })
 

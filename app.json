@@ -17,14 +17,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.baancoffee.baancoffee.dev"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.baancoffee.baancoffee.dev"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -35,7 +37,10 @@
     ],
     "scheme": "baancoffee",
     "extra": {
-      "serverApi": "baan-coffee-production.up.railway.app"
+      "serverApi": "baan-coffee-production.up.railway.app",
+      "eas": {
+        "projectId": "2dc58244-659f-412d-b5fb-870500e00fde"
+      }
     }
   }
 }
