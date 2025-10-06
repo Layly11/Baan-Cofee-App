@@ -24,9 +24,7 @@ const Cart = ({ navigation, route }: any) => {
     const fetchCartItems = async () => {
         try {
             const res = await fetchCartRequester()
-            // console.log("Cart: ", res.data.cart)
             setCartItems(res.data.cart)
-            console.log("CartItems: ", res.data.cart)
         } catch (err) {
             console.log(err)
         }

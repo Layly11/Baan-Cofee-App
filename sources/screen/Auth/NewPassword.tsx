@@ -176,7 +176,7 @@ const NewPassword = ({ navigation }: any) => {
 
               <RNButton
                 title="Update Password"
-                style={{ bottom: isIOS ? hp(3) : hp(5) }}
+                style={{ bottom: isIOS ? hp(3) : hp(5), alignSelf: "center" }}
                 disabled={!canSubmit}
                 onPress={handleSubmit}
               />

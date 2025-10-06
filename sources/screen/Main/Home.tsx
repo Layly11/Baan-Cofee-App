@@ -56,7 +56,6 @@ const Home = ({ navigation }: any) => {
         try {
             const res = await fetchBestSellerRequester()
             const bestSeller = res.bestSeller
-            console.log("BestSeller: ", bestSeller)
             setBestSeller(bestSeller)
             setHasError(false)
         } catch (err) {

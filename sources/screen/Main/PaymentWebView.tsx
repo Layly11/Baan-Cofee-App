@@ -52,7 +52,6 @@ export default function PaymentWebView({ navigation, route }: any) {
                 style={{ flex: 1 }}
                 onMessage={async (event) => {
                     const data = JSON.parse(event.nativeEvent.data);
-                    console.log("Status: ", data)
                     if (data.message === 'true') {
                         navigation.replace(NavRoutes.PAYMENT_RESULT, { result: true, reference: data.reference });
 

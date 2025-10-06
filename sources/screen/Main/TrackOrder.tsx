@@ -62,7 +62,6 @@ const TrackOrder = ({ navigation, route }: any) => {
     const ferchTrackOrder = async () => {
         try {
             const res = await getTrackOrderRequester(orderId)
-            console.log("Order: ", res.order)
             setOrder(res.order)
         } catch (err) {
             console.log(err)

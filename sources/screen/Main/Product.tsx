@@ -70,7 +70,6 @@ const Product = ({ navigation, route }: any) => {
     }
 
     useEffect(() => {
-        console.log("Product: ", product)
         fetchSizeProduct()
     }, [])
 

@@ -680,7 +680,6 @@ export const PayForQRRequester = async (payload:any) => {
         })
 
         const data = await res.json()
-        console.log("Data: ", data)
         if (!res.ok) {
             const err: any = new Error(data.res_desc || "Something went wrong");
             err.res_code = data.res_code;

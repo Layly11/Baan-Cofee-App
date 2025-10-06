@@ -13,7 +13,6 @@ const PaymentResult = ({ navigation, route }: any) => {
     const fetchPaymentData = async () => {
         try {
             const res = await fetchOrderRequester(reference)
-            console.log("Res: ", res)
             setPayment(res.payment)
         } catch (err) {
             console.log(err)

@@ -111,7 +111,6 @@ const EditProfile = ({ navigation, route }: any) => {
         try {
 
             const res = await deleteProfileRequester()
-            console.log("res: ", res)
             dispatch(onAuthChange(false))
             dispatch(setAsyncStorageValue({}));
             clearAuthData()

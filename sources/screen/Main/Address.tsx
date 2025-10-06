@@ -32,8 +32,6 @@ const Address = ({ navigation, route }: any) => {
     try {
       const res = await fetchAddressRequester()
       setAddresses(res.data.address)
-      console.log(res.data.address)
-
       const storeId = await AsyncStorage.getItem('selectedAddressId')
       if (storeId) setSelectedAddressId(Number(storeId))
     } catch (err: any) {
@@ -64,7 +62,6 @@ const Address = ({ navigation, route }: any) => {
   const onDelete = async (id: number) => {
     try {
       const res = await deleteAddressRequester(id)
-      console.log("Res: ", res)
       if (res.res_code === '1111') {
         setAddresses((prev: any) => prev.filter((a: any) => a.id !== id));
 
@@ -84,7 +81,6 @@ const Address = ({ navigation, route }: any) => {
   };
 
   const handleSaveModal = async (data: any) => {
-    console.log("Data: ", data)
     try {
       if (editMode && editingData?.id) {
         const res = await updateAddressRequester(editingData.id, data);
@@ -176,9 +172,9 @@ const Address = ({ navigation, route }: any) => {
                 </TouchableOpacity>
               ))}
 
-                <View style={styles.deleteButton}>
-          <RNButton title={"Add New Address"} onPress={openAdd} />
-        </View>
+              <View style={styles.deleteButton}>
+                <RNButton title={"Add New Address"} onPress={openAdd} style={{alignSelf: "center"}} />
+              </View>
             </>
           )
         }

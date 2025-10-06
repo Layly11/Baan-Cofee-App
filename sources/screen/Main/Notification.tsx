@@ -13,7 +13,6 @@ const Notification = ({ navigation, route } :any) => {
   const fetchNoftifyOder = async () => {
     try {
         const res = await fetchNotifyOrderRequester()
-        console.log("Notification: ",res.notification)
         setNotification(res.notification)
     } catch (err) {
         console.log(err)
