@@ -4,7 +4,7 @@ const SERVER_DOMAIN = Constants.expoConfig?.extra?.serverApi
 
 const BASE_URL = SERVER_DOMAIN 
     ? `https://${SERVER_DOMAIN}`
-    : 'localhost:3000';
+    : 'http://localhost:9302';
 
 
 export const registerCustomerRequester = async ({ name, email, password, phone }: any) => {
@@ -376,12 +376,13 @@ export const updateProfileRequester = async (payload: any) => {
         })
 
 
+        const data = await res.json()
         if (!res.ok) {
-            const text = await res.text().catch(() => '');
-            throw new Error(`Update failed (${res.status}): ${text}`);
+            const err: any = new Error(data.res_desc || "Something went wrong");
+            err.res_code = data.res_code;
+            throw err;
         }
 
-        const data = await res.json()
         return data;
 
     } catch (error) {

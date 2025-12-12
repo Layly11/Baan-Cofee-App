@@ -97,8 +97,17 @@ const EditProfile = ({ navigation, route }: any) => {
             navigation.goBack();
 
         } catch (err: any) {
-            console.log(err);
-            alert(err?.response?.data?.res_desc || 'Save failed');
+            console.log(err.res_code);
+            if(err.res_code === "4005"){
+                Alert.alert("Cannot Save Profile",'Phone has already exists');
+            }
+            else if (err.res_code === "4006") {
+                Alert.alert("Cannot Save Profile",'Email has already exists');
+            }
+            else {
+                alert(err?.response?.data?.res_desc || 'Save failed');
+            }
+            setSaving(false);
         }
     }
 
