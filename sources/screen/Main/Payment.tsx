@@ -49,8 +49,12 @@ const Payment = ({ navigation, route }: any) => {
         const addressId = await AsyncStorage.getItem('selectedAddressId')
         try {
             const res = await PaymentRequester({amount, selectedMethod, product, addressId})
-
-            navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url, method: selectedMethod, bill_reference_1: res.bill_reference_1, amount})
+            if(res.message === "Gateway Bypassed"){
+                navigation.replace(NavRoutes.PAYMENT_RESULT, { result: true, amount })
+            }else {
+                navigation.replace(NavRoutes.PAYMENT_WEB_VIEW, { url: res.redirect_url, method: selectedMethod, bill_reference_1: res.bill_reference_1, amount})
+                
+            }
         } catch (err) {
             navigation.navigate('Drawer', {
                         screen: 'BottomTabs',
