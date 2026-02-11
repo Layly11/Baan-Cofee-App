@@ -1,15 +1,15 @@
-import * as ImagePicker from 'expo-image-picker';
 import { RNButton, RNHeader, RNImage, RNInput, RNText } from "@/sources/common";
 import ConfirmModal from "@/sources/component/ConfirmModal";
 import SVG from "@/sources/constants/Svg";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import { Colors, FontSize, hp, isIOS, normalize, wp } from "@/sources/theme";
 import { clearAuthData } from "@/sources/utils/auth";
+import { deleteProfileRequester, updateProfileRequester, uploadProfileImageRequester } from '@/sources/utils/requestUtils';
+import * as ImagePicker from 'expo-image-picker';
 import { useMemo, useState } from "react";
-import { Alert, StyleSheet, TouchableOpacity, View } from "react-native"
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
-import { deleteProfileRequester, updateProfileRequester, uploadProfileImageRequester } from '@/sources/utils/requestUtils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9]{10}$/;
@@ -38,9 +38,17 @@ const EditProfile = ({ navigation, route }: any) => {
         return e;
     }, [userData]);
 
+    const hasChanges = useMemo(() => {
+        const nameChanged = userData.name.trim() !== (profile.name || "").trim();
+        const emailChanged = userData.email.trim() !== (profile.email || "").trim();
+        const phoneChanged = userData.phone.trim() !== (profile.phone || "").trim();
+        const imageChanged = !!pickedImageUri;
+        return nameChanged || emailChanged || phoneChanged || imageChanged;
+    }, [userData, profile, pickedImageUri]);
+
     const canSave = useMemo(
-        () => !saving && !uploading && Object.keys(errors).length === 0,
-        [saving, uploading, errors]
+        () => !saving && !uploading && Object.keys(errors).length === 0 && hasChanges,
+        [saving, uploading, errors, hasChanges]
     );
     const pickImage = async () => {
         // ขอ permission
@@ -77,12 +85,13 @@ const EditProfile = ({ navigation, route }: any) => {
                 setUploading(false);
             }
 
-            const payload = {
+            const payload: any = {
                 id: userData.id,
-                name: userData.name.trim(),
-                email: userData.email.trim(),
-                phone: userData.phone.trim(),
             };
+
+            if (userData.name.trim() !== (profile.name || "").trim()) payload.name = userData.name.trim();
+            if (userData.email.trim() !== (profile.email || "").trim()) payload.email = userData.email.trim();
+            if (userData.phone.trim() !== (profile.phone || "").trim()) payload.phone = userData.phone.trim();
 
             const resp = await updateProfileRequester(payload);
 
@@ -98,11 +107,11 @@ const EditProfile = ({ navigation, route }: any) => {
 
         } catch (err: any) {
             console.log(err.res_code);
-            if(err.res_code === "4005"){
-                Alert.alert("Cannot Save Profile",'Phone has already exists');
+            if (err.res_code === "4005") {
+                Alert.alert("Cannot Save Profile", 'Phone has already exists');
             }
             else if (err.res_code === "4006") {
-                Alert.alert("Cannot Save Profile",'Email has already exists');
+                Alert.alert("Cannot Save Profile", 'Email has already exists');
             }
             else {
                 alert(err?.response?.data?.res_desc || 'Save failed');
@@ -112,6 +121,7 @@ const EditProfile = ({ navigation, route }: any) => {
     }
 
     const handelAlertSave = () => {
+        if (!hasChanges && Object.keys(errors).length === 0) return;
         Alert.alert("Cannot Save Profile", "Please make sure all fields are filled correctly before saving.")
     }
 
@@ -124,7 +134,7 @@ const EditProfile = ({ navigation, route }: any) => {
             dispatch(setAsyncStorageValue({}));
             clearAuthData()
         } catch (err) {
-             console.log(err);
+            console.log(err);
         }
     }
     return (
