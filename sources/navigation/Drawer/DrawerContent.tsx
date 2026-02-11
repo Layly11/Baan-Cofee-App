@@ -4,6 +4,7 @@ import SVG from "@/sources/constants/Svg";
 import { onAuthChange, setAsyncStorageValue } from "@/sources/redux/Reducers/AuthReducers";
 import { Colors, FontFamily, FontSize, hp, normalize, wp } from "@/sources/theme";
 import { clearAuthData } from "@/sources/utils/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -104,11 +105,12 @@ const DrawerContent = ({ navigation }: any) => {
 
             <ConfirmModal
                 visible={modalVisible}
-                onConfirm={() => {
+                onConfirm={async () => {
                     setModalVisible(false);
-                    dispatch(onAuthChange(false))
+                    await clearAuthData();
+                    dispatch(onAuthChange(false));
                     dispatch(setAsyncStorageValue({}));
-                    clearAuthData()
+                    AsyncStorage.removeItem('selectedAddressId');
                 }}
                 onCancel={() => setModalVisible(false)}
             />

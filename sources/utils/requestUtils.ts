@@ -1,9 +1,9 @@
 import Constants from 'expo-constants';
 import { authFetch } from "./fetch";
-const SERVER_DOMAIN = Constants.expoConfig?.extra?.serverApi
+const SERVER_DOMAIN = null
 
 const BASE_URL = SERVER_DOMAIN 
-    ? `https://${SERVER_DOMAIN}`
+    ? `http://${SERVER_DOMAIN}`
     : 'http://localhost:9302';
 
 
