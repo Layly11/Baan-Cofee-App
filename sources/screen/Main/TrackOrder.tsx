@@ -153,7 +153,7 @@ const TrackOrder = ({ navigation, route }: any) => {
                         navigation.goBack();
                     }
                 }}
-                title={"My Addresses"}
+                title={"Track Order"}
             />
             <View style={[styles.content, { paddingBottom: insets.bottom }]}>
                 <View style={{ ...RNStyles.center, gap: hp(1) }}>
